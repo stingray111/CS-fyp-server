@@ -1,0 +1,22 @@
+{
+  "name": "csfypserver",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/stingray111/CS-fyp-server.git"
+  },
+  "author": "Ray, Ken",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/stingray111/CS-fyp-server/issues"
+  },
+  "homepage": "https://github.com/stingray111/CS-fyp-server#readme",
+  "dependencies": {
+    "express": "^4.14.0"
+  }
+}
