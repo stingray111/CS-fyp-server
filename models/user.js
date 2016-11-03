@@ -9,40 +9,45 @@ var User = seq.define('User', {
         type: Sequelize.INTEGER,
         autoIncrement: true
     },
-    username: Sequelize.STRING,
+    userName: Sequelize.STRING,
+    firstName: Sequelize.STRING,
+    lastName: Sequelize.STRING,
+    nickName: Sequelize.STRING,
+    gender: Sequelize.BOOLEAN,
+    proPic: Sequelize.BOOLEAN,
     password: Sequelize.STRING,
-    email :Sequelize.STRING,
-    icon: Sequelize.STRING,
+    salt: Sequelize.STRING,
+    saltDate: Sequelize.DATE,
     description: Sequelize.STRING,
-    privacy: Sequelize.STRING
+    attendEventNum: Sequelize.INTEGER,
+    abcentEventNum: Sequelize.INTEGER,
+    holdEventNum: Sequelize,
+    email :Sequelize.STRING,
+    phone: Sequelize.STRING
 });
 
 module.exports = User;
 
-var Follow = require('./follow');
-User.hasMany(Follow, {foreignKey: 'followeeUserId', as: 'followerFollows'});
-User.hasMany(Follow, {foreignKey: 'followerUserId', as: 'followeeFollows'});
-User.belongsToMany(User, {
-    through: Follow,
-    as: 'followers',
-    foreignKey: 'followeeUserId',
-    otherKey: 'followerUserId'
+// var Follow = require('./follow');
+// User.hasMany(Follow, {foreignKey: 'followeeUserId', as: 'followerFollows'});
+// User.hasMany(Follow, {foreignKey: 'followerUserId', as: 'followeeFollows'});
+// User.belongsToMany(User, {
+//     through: Follow,
+//     as: 'followers',
+//     foreignKey: 'followeeUserId',
+//     otherKey: 'followerUserId'
+// });
+// User.belongsToMany(User, {
+//     through: Follow,
+//     as: 'followees',
+//     foreignKey: 'followerUserId',
+//     otherKey: 'followeeUserId'
+// });
+
+var Event = require('./event');
+User.hasMany(Event, {foreignKey: 'holderId'});
+
+var ParticipantList = require('/participant-list');
+User.belongsToMany(ParticipantList, {
+    as: ''
 });
-User.belongsToMany(User, {
-    through: Follow,
-    as: 'followees',
-    foreignKey: 'followerUserId',
-    otherKey: 'followeeUserId'
-});
-var Feed = require('./feed');
-User.hasMany(Feed, {foreignKey: 'userId'});
-var FeedAccess = require('./feed-access');
-User.hasMany(FeedAccess, {foreignKey: 'userId'});
-User.belongsToMany(Feed, {
-    through: FeedAccess,
-    as: 'accessibleFeeds',
-    foreignKey: 'userId',
-    otherKey: 'feedId'
-});
-var LoginStatus = require('./login-status');
-User.hasMany(LoginStatus, {foreignKey: 'userId'});

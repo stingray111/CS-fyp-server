@@ -1,0 +1,6 @@
+var seq = require('./seq');
+var Sequelize = require('sequelize');
+
+var ParticipantList = seq.define('ParticipantList', {
+
+});

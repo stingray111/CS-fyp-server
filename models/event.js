@@ -2,20 +2,25 @@ var seq = require('./seq');
 var Sequelize = require('sequelize');
 
 // todo change back to our feed model
-var Feed = seq.define('Feed', {
+var Event = seq.define('Feed', {
     id : {
         primaryKey: true,
         type: Sequelize.INTEGER,
         autoIncrement: true
     },
-    userId : Sequelize.INTEGER,
-    actionId : Sequelize.INTEGER,
-    customAction : Sequelize.STRING,
-    audio : Sequelize.STRING,
-    expiryTime: Sequelize.DATE
+    holderId : Sequelize.INTEGER,
+    name : Sequelize.STRING,
+    place : Sequelize.STRING,
+    latitude : Sequelize.FLOAT,
+    longitude : Sequelize.FLOAT,
+    description: Sequelize.STRING,
+    deadlineTime: Sequelize.DATE,
+    startTime: Sequelize.DATE,
+    minPpl: Sequelize.INTEGER,
+    maxPpl: Sequelize.INTEGER
 });
 
-module.exports = Feed;
+module.exports = Event;
 
 var User = require('./user');
 Feed.belongsTo(User, {foreignKey: 'userId'});

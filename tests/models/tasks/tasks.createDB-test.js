@@ -7,7 +7,7 @@ var LoginStatus = require('../../../models/login-status');
 var Follow = require('../../../models/follow');
 var Verb = require('../../../models/verb');
 var Action = require('../../../models/action');
-var Feed = require('../../../models/feed');
+var Feed = require('../../../models/event');
 var FeedAccess = require('../../../models/feed-access');
 
 context('tasks.createDB()', function () {
