@@ -23,14 +23,17 @@ var Event = seq.define('Feed', {
 module.exports = Event;
 
 var User = require('./user');
-Feed.belongsTo(User, {foreignKey: 'userId'});
-var Action = require('./action');
-Feed.belongsTo(Action, {foreignKey: 'actionId'});
-var FeedAccess = require('./feed-access');
-Feed.hasMany(FeedAccess, {foreignKey: 'feedId'});
-Feed.belongsToMany(User, {
-    through: FeedAccess,
-    as: 'accessibleUsers',
-    foreignKey: 'feedId',
+var ParticipantList = require('./participant-list');
+
+//Event.getParticipants / setParticipants
+Event.belongsToMany(User, {
+    as: 'Participants',
+    through: ParticipantList,
+    foreignKey: 'eventId',
     otherKey: 'userId'
+});
+
+Event.belongsTo(User, {
+    as: 'Holder',
+    foreignKey: 'userId'
 });

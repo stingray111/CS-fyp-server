@@ -21,33 +21,30 @@ var User = seq.define('User', {
     description: Sequelize.STRING,
     attendEventNum: Sequelize.INTEGER,
     abcentEventNum: Sequelize.INTEGER,
-    holdEventNum: Sequelize,
+    holdEventNum: Sequelize.INTEGER,
     email :Sequelize.STRING,
-    phone: Sequelize.STRING
+    phone: Sequelize.STRING,
+    level: Sequelize.INTEGER
 });
 
 module.exports = User;
 
-// var Follow = require('./follow');
-// User.hasMany(Follow, {foreignKey: 'followeeUserId', as: 'followerFollows'});
-// User.hasMany(Follow, {foreignKey: 'followerUserId', as: 'followeeFollows'});
-// User.belongsToMany(User, {
-//     through: Follow,
-//     as: 'followers',
-//     foreignKey: 'followeeUserId',
-//     otherKey: 'followerUserId'
-// });
-// User.belongsToMany(User, {
-//     through: Follow,
-//     as: 'followees',
-//     foreignKey: 'followerUserId',
-//     otherKey: 'followeeUserId'
-// });
-
 var Event = require('./event');
-User.hasMany(Event, {foreignKey: 'holderId'});
+var Participation = require('./participant-list');
 
-var ParticipantList = require('/participant-list');
-User.belongsToMany(ParticipantList, {
-    as: ''
+// user.getHoldinfEvents, setHoldingEvents
+User.hasMany(Event, {
+    as: 'HoldingEvents',
+    foreignKey: 'holderId'
 });
+
+// user.getParticipations, setParticipations
+User.belongsToMany(Event, {
+    as: 'Participations',
+    through: Participation,
+    foreignKey: 'userId',
+    otherKey: 'eventId'
+});
+
+var LoginStatus = require('./login-status');
+User.hasMany(LoginStatus, {foreignKey: 'userId'});

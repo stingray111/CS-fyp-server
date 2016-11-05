@@ -4,59 +4,98 @@ var hasher = require('../lib/hasher');
 
 exports.register = function (req, res, promise) {
     /*
-    req.body = {
-     username:
-     email:
-     password:
-    }
+     req.body = {
+     userName: required
+     email: required
+     password: required
+     firstName:
+     lastName:
+     nickName:
+     gender:
+     proPic:
+     phone:
+     description:
+     }
      */
+
+    console.log(req.body);
 
     var respond = {
         err: null
     };
 
-    if(req.body.username == null || req.body.username == undefined || req.body.username == '') {
+    // check empty required field
+    if (req.body.userName == null || req.body.userName == undefined || req.body.userName == '') {
         promise.reject('usernameShouldNotBeEmpty');
         return promise;
     }
 
-    if(req.body.email == null || req.body.email == undefined || req.body.email == '') {
+    if (req.body.email == null || req.body.email == undefined || req.body.email == '') {
         promise.reject('emailShouldNotBeEmpty');
         return promise;
     }
 
-    if(req.body.password == null || req.body.password == undefined || req.body.password == '') {
+    if (req.body.password == null || req.body.password == undefined || req.body.password == '') {
         promise.reject('passwordShouldNotBeEmpty');
         return promise;
     }
 
-    if(req.body.username.match(/^\w{5,20}$/) == null) {
+    // check field format
+    if (req.body.userName.match(/^\w{5,20}$/) == null) {
         promise.reject('usernameWrongFormat');
         return promise;
     }
 
-    if(req.body.email.match(/.+@.+/) == null) {
+    if (req.body.email.match(/.+@.+/) == null) {
         promise.reject('emailWrongFormat');
         return promise;
     }
 
-    if(req.body.password.match(/^.{8,50}$/) == null) {
+    if (req.body.password.match(/^.{8,50}$/) == null) {
         promise.reject('passwordWrongFormat');
         return promise;
     }
 
-    User.create({
-        username: req.body.username,
-        email: req.body.email,
-        password: hasher.hash(req.body.password, hasher.hashVal.dbPw),
-        privacy: 'public'
+    // todo: add checking other field
+
+    User.findOne({
+        where: {
+            username: req.body.userName
+        }
+    }).then(function (entry) {
+        if (entry)
+            throw 'SameUserFound';
+    }).then(function () {
+        return User.findOne({
+            where: {
+                email: req.body.email
+            }
+        })
+    }).then(function (entry) {
+        if (entry)
+            throw 'SameEmailFound';
+        return User.create({
+            userName: req.body.userName,
+            email: req.body.email,
+            password: hasher.hash(req.body.password, hasher.hashVal.dbPw),
+            firstName: req.body.firstName,
+            lastName: req.body.lastName,
+            nickName: req.body.nickName,
+            gender: req.body.isMale,
+            proPic: req.body.proPic,
+            phone: req.body.phone,
+            description: req.body.description,
+            level: 1
+        })
     }).then(function (user) {
         if (user) {
             promise.resolve();
             res.send(respond);
         } else {
-            promise.reject();
+            throw 'unableToAddUser';
         }
+    }).catch(function (e) {
+        promise.reject(e);
     });
     return promise;
 };
