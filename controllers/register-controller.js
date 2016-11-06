@@ -21,7 +21,8 @@ exports.register = function (req, res, promise) {
     console.log(req.body);
 
     var respond = {
-        err: null
+        isSucessful: false,
+        errorMsg: null
     };
 
     // check empty required field
@@ -90,12 +91,31 @@ exports.register = function (req, res, promise) {
     }).then(function (user) {
         if (user) {
             promise.resolve();
-            res.send(respond);
+            res.send({
+                isSucessful: true,
+                errorMsg: null
+            });
         } else {
             throw 'unableToAddUser';
         }
     }).catch(function (e) {
-        promise.reject(e);
+        if(e == 'SameEmailFound') {
+            promise.resolve
+            res.send({
+                isSucessful: false,
+                errorMsg: 'SameEmailFound'
+            });
+            console.log('errorMsg sent: ' + e);
+        } else if (e == 'SameUserFound') {
+            promise.resolve
+            res.send({
+                isSucessful: false,
+                errorMsg: 'SameUserFound'
+            });
+            console.log('errorMsg sent: ' + e);
+        } else {
+            promise.reject(e);
+        }
     });
     return promise;
 };
