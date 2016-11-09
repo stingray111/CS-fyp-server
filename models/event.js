@@ -2,7 +2,7 @@ var seq = require('./seq');
 var Sequelize = require('sequelize');
 
 // todo change back to our feed model
-var Event = seq.define('Feed', {
+var Event = seq.define('Event', {
     id : {
         primaryKey: true,
         type: Sequelize.INTEGER,
@@ -11,8 +11,8 @@ var Event = seq.define('Feed', {
     holderId : Sequelize.INTEGER,
     name : Sequelize.STRING,
     place : Sequelize.STRING,
-    latitude : Sequelize.FLOAT,
-    longitude : Sequelize.FLOAT,
+    latitude : Sequelize.DOUBLE,
+    longitude : Sequelize.DOUBLE,
     description: Sequelize.STRING,
     deadlineTime: Sequelize.DATE,
     startTime: Sequelize.DATE,
@@ -35,5 +35,5 @@ Event.belongsToMany(User, {
 
 Event.belongsTo(User, {
     as: 'Holder',
-    foreignKey: 'userId'
+    foreignKey: 'holderId'
 });
