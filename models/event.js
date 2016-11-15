@@ -27,13 +27,13 @@ var ParticipantList = require('./participant-list');
 
 //Event.getParticipants / setParticipants
 Event.belongsToMany(User, {
-    as: 'Participants',
+    as: 'participantList',
     through: ParticipantList,
     foreignKey: 'eventId',
     otherKey: 'userId'
 });
 
 Event.belongsTo(User, {
-    as: 'Holder',
+    as: 'holder',
     foreignKey: 'holderId'
 });

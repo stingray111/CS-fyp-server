@@ -12,6 +12,8 @@ router.post('/api/login', mw(loginCtrl.login));
 
 router.post('/api/logout', mw(loginCtrl.logout));
 
+router.post('/api/get-event', mw(eventCtrl.getEvent));
+
 router.post('/api/get-events', mw(eventCtrl.getEvents));
 
 module.exports = router;

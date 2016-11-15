@@ -1,6 +1,9 @@
 var Event = require('../models/event');
+var User = require('../models/user');
+var Participation = require('../models/participant-list');
 var crypto = require('crypto');
 var hasher = require('../lib/hasher');
+var sequelize = require('sequelize');
 
 exports.pushEvent = function (req, res, promise) {
     Event.create({
@@ -17,9 +20,35 @@ exports.pushEvent = function (req, res, promise) {
     })
 };
 
+exports.getEvent = function (req, res, promise) {
+
+    var respond;
+
+    console.log(req.body);
+
+    Event.findOne({
+        attributes: {
+            include: [[sequelize.fn('date_format', sequelize.col('deadlineTime'), '%d/%m %H:%i'), 'deadlineTime_formated'],
+                [sequelize.fn('date_format', sequelize.col('startTime'), '%d/%m %H:%i'), 'startTime_formated']]
+        },
+        include: [
+            { model: User, as: 'holder', attributes: ['userName']},
+            { model: User, as: 'participantList', attributes: ['userName']}
+        ],
+        where: {id: req.body.id}
+    }).then(function (event) {
+        console.log(JSON.stringify(event));
+        res.send(event);
+        promise.resolve();
+    });
+    return promise;
+};
+
 exports.getEvents = function (req, res, promise) {
     const latPerKilo = 0.009009;
     const lngPerKilo = 0.011764;
+
+    console.log(req.body);
 
     if (req.body.latitude == null || req.body.latitude == undefined) {
         promise.reject(new Error('latitudeShouldNotBeEmpty'));
@@ -48,47 +77,25 @@ exports.getEvents = function (req, res, promise) {
 
     if (req.body.mode == 1) {
         Event.findAll({
+            attributes: {
+                include: [[sequelize.fn('date_format', sequelize.col('deadlineTime'), '%d/%m %H:%i'), 'deadlineTime_formated'],
+                [sequelize.fn('date_format', sequelize.col('startTime'), '%d/%m %H:%i'), 'startTime_formated']]
+            },
+            include: [{ model: User, as: 'holder', attributes: ['userName']}],
             where: {
                 // todo fix range issue in pole??
                 latitude: {$between: [req.body.latitude - 50 * latPerKilo, req.body.latitude + 50 * latPerKilo]},
                 longitude: {$between: [req.body.longitude - 50 * lngPerKilo, req.body.longitude + 50 * lngPerKilo]}
-            },
-            attributes: [
-                'id',
-                'holderId',
-                'name',
-                'place',
-                'latitude',
-                'longitude',
-                'description',
-                'minPpl',
-                'maxPpl',
-                [sequelize.fn('date_format', sequelize.col('deadlineTime'), '%d/%m %H:%i'), 'deadlineTime_formated'],
-                [sequelize.fn('date_format', sequelize.col('deadlineTime'), '%d/%m %H:%i'), 'deadlineTime_formated']
-            ]
+            }
         }).then(function (events) {
-
-            var temp = events.map(function (item) {
-                return {
-                    id: item.id,
-                    holderId: item.holderId,
-                    name: item.name,
-                    place: item.place,
-                    latitude: item.latitude,
-                    longitude: item.longitude,
-                    description: item.description,
-                    minPpl: item.minPpl,
-                    maxPpl: item.maxPpl,
-                    currentPpl: item.getParticipants()
-                }
-
-            });
-            console.log()
+            console.log(events[0]);
             res.send({
                 errorMsg: null,
                 data: events
             });
             promise.resolve();
+        }).catch(function (e) {
+            promise.reject(new Error(e));
         })
     }
     return promise;
