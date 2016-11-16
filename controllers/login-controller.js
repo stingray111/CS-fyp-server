@@ -99,6 +99,7 @@ exports.login = function (req, res, promise) {
         })
     }).then(function (loginStatus) {
         respond.token = loginStatus.id;
+        respond.userId = loginStatus.userId;
         respond.isSuccessful = true;
         // req.locals.testing = {
         //     token: loginStatus.id

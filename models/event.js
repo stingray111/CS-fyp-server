@@ -16,6 +16,7 @@ var Event = seq.define('Event', {
     description: Sequelize.STRING,
     deadlineTime: Sequelize.DATE,
     startTime: Sequelize.DATE,
+    currentPpl: Sequelize.INTEGER,
     minPpl: Sequelize.INTEGER,
     maxPpl: Sequelize.INTEGER
 });

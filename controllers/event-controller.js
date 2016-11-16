@@ -14,15 +14,13 @@ exports.pushEvent = function (req, res, promise) {
         longitude: req.body.longitude,
         description: req.body.description,
         deadlineTime: sequelize.fn('STR_TO_DATE', req.body.deadlineTime, '%d/%m %H:%i'),
-        startTime: req.body.startTime,
+        startTime: sequelize.fn('STR_TO_DATE', req.body.startTime, '%d/%m %H:%i'),
         minPpl: req.body.minPpl,
         maxPpl: req.body.maxPpl
     })
 };
 
 exports.getEvent = function (req, res, promise) {
-
-    var respond;
 
     console.log(req.body);
 
@@ -85,10 +83,54 @@ exports.getEvents = function (req, res, promise) {
             where: {
                 // todo fix range issue in pole??
                 latitude: {$between: [req.body.latitude - 50 * latPerKilo, req.body.latitude + 50 * latPerKilo]},
-                longitude: {$between: [req.body.longitude - 50 * lngPerKilo, req.body.longitude + 50 * lngPerKilo]}
+                longitude: {$between: [req.body.longitude - 50 * lngPerKilo, req.body.longitude + 50 * lngPerKilo]},
+                deadlineTime: {$gt: Date.now()}
             }
         }).then(function (events) {
-            console.log(events[0]);
+            res.send({
+                errorMsg: null,
+                data: events
+            });
+            promise.resolve();
+        }).catch(function (e) {
+            promise.reject(new Error(e));
+        })
+    } else if (req.body.mode == 2) {  // for history
+        Event.findAll({
+            attributes: {
+                include: [[sequelize.fn('date_format', sequelize.col('deadlineTime'), '%d/%m %H:%i'), 'deadlineTime_formated'],
+                    [sequelize.fn('date_format', sequelize.col('startTime'), '%d/%m %H:%i'), 'startTime_formated']]
+            },
+            include: [
+                { model: User, as: 'holder', attributes: ['userName']},
+                { model: User, as: 'participantList', attributes: ['userName'], where: {id: req.body.userId}}],
+            where: {
+                startTime: {$lt: Date.now()}
+            }
+        }).then(function (events) {
+            console.log(JSON.stringify(events));
+            res.send({
+                errorMsg: null,
+                data: events
+            });
+            promise.resolve();
+        }).catch(function (e) {
+            promise.reject(new Error(e));
+        })
+    } else if (req.body.mode == 3) {
+        Event.findAll({
+            attributes: {
+                include: [[sequelize.fn('date_format', sequelize.col('deadlineTime'), '%d/%m %H:%i'), 'deadlineTime_formated'],
+                    [sequelize.fn('date_format', sequelize.col('startTime'), '%d/%m %H:%i'), 'startTime_formated']]
+            },
+            include: [
+                { model: User, as: 'holder', attributes: ['userName']},
+                { model: User, as: 'participantList', attributes: ['userName'], where: {id: req.body.userId}}],
+            where: {
+                startTime: {$gt: Date.now()}
+            }
+        }).then(function (events) {
+            console.log(JSON.stringify(events));
             res.send({
                 errorMsg: null,
                 data: events
