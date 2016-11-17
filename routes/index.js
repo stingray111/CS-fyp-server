@@ -4,6 +4,7 @@ var mw = require('../lib/middleware-wrapper');
 var loginCtrl = require('../controllers/login-controller');
 var registerCtrl = require('../controllers/register-controller');
 var eventCtrl = require('../controllers/event-controller');
+var userCtrl = require('../controllers/user-controller');
 
 
 router.post('/api/register', mw(registerCtrl.register));
@@ -11,6 +12,8 @@ router.post('/api/register', mw(registerCtrl.register));
 router.post('/api/login', mw(loginCtrl.login));
 
 router.post('/api/logout', mw(loginCtrl.logout));
+
+router.post('/api/get-user', mw(userCtrl.getUser));
 
 router.post('/api/get-event', mw(eventCtrl.getEvent));
 

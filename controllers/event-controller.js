@@ -1,7 +1,6 @@
 var Event = require('../models/event');
 var User = require('../models/user');
 var Participation = require('../models/participant-list');
-var crypto = require('crypto');
 var hasher = require('../lib/hasher');
 var sequelize = require('sequelize');
 
