@@ -5,6 +5,7 @@ var hasher = require('../lib/hasher');
 var sequelize = require('sequelize');
 
 exports.pushEvent = function (req, res, promise) {
+    console.log(req.body);
     Event.create({
         holderId: req.body.holderId,
         name: req.body.name,
@@ -12,11 +13,17 @@ exports.pushEvent = function (req, res, promise) {
         latitude: req.body.latitude,
         longitude: req.body.longitude,
         description: req.body.description,
-        deadlineTime: sequelize.fn('STR_TO_DATE', req.body.deadlineTime, '%d/%m %H:%i'),
-        startTime: sequelize.fn('STR_TO_DATE', req.body.startTime, '%d/%m %H:%i'),
+        //deadlineTime: sequelize.fn('STR_TO_DATE', req.body.deadlineTime, '%d/%m %H:%i'),
+        //startTime: sequelize.fn('STR_TO_DATE', req.body.startTime, '%d/%m %H:%i'),
         minPpl: req.body.minPpl,
         maxPpl: req.body.maxPpl
-    })
+    }).then(function (event) {
+        res.send({
+            errorMsg: null
+        });
+        promise.resolve();
+    });
+    return promise;
 };
 
 exports.getEvent = function (req, res, promise) {

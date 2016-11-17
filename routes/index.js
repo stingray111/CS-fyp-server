@@ -19,4 +19,6 @@ router.post('/api/get-event', mw(eventCtrl.getEvent));
 
 router.post('/api/get-events', mw(eventCtrl.getEvents));
 
+router.post('/api/push-event', mw(eventCtrl.pushEvent));
+
 module.exports = router;
