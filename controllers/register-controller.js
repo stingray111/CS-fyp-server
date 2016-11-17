@@ -21,7 +21,7 @@ exports.register = function (req, res, promise) {
     console.log(req.body);
 
     var respond = {
-        isSucessful: false,
+        isSuccessful: false,
         errorMsg: null
     };
 
@@ -92,7 +92,7 @@ exports.register = function (req, res, promise) {
         if (user) {
             promise.resolve();
             res.send({
-                isSucessful: true,
+                isSuccessful: true,
                 errorMsg: null
             });
         } else {
@@ -102,14 +102,14 @@ exports.register = function (req, res, promise) {
         if(e == 'SameEmailFound') {
             promise.resolve
             res.send({
-                isSucessful: false,
+                isSuccessful: false,
                 errorMsg: 'SameEmailFound'
             });
             console.log('errorMsg sent: ' + e);
         } else if (e == 'SameUserFound') {
             promise.resolve
             res.send({
-                isSucessful: false,
+                isSuccessful: false,
                 errorMsg: 'SameUserFound'
             });
             console.log('errorMsg sent: ' + e);
