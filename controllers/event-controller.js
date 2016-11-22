@@ -3,6 +3,8 @@ var User = require('../models/user');
 var Participation = require('../models/participant-list');
 var hasher = require('../lib/hasher');
 var sequelize = require('sequelize');
+var moment = require('moment');
+
 
 exports.pushEvent = function (req, res, promise) {
     console.log(req.body);
@@ -13,8 +15,9 @@ exports.pushEvent = function (req, res, promise) {
         latitude: req.body.latitude,
         longitude: req.body.longitude,
         description: req.body.description,
-        //deadlineTime: sequelize.fn('STR_TO_DATE', req.body.deadlineTime, '%d/%m %H:%i'),
-        //startTime: sequelize.fn('STR_TO_DATE', req.body.startTime, '%d/%m %H:%i'),
+        deadlineTime: moment(req.body.eventDeadline, "YYYY-MM-DD HH:mm").toDate(),
+        startTime: moment(req.body.eventStart, "YYYY-MM-DD HH:mm").toDate(),
+        currentPpl: 0,
         minPpl: req.body.minPpl,
         maxPpl: req.body.maxPpl
     }).then(function (event) {
@@ -28,7 +31,7 @@ exports.pushEvent = function (req, res, promise) {
 
 exports.getEvent = function (req, res, promise) {
 
-    console.log(req.body);
+    //todo validation
 
     Event.findOne({
         attributes: {
@@ -37,7 +40,7 @@ exports.getEvent = function (req, res, promise) {
         },
         include: [
             { model: User, as: 'holder', attributes: ['userName']},
-            { model: User, as: 'participantList', attributes: ['userName']}
+            { model: User, as: 'participantList', attributes: ['userName', 'id']}
         ],
         where: {id: req.body.id}
     }).then(function (event) {
@@ -51,8 +54,6 @@ exports.getEvent = function (req, res, promise) {
 exports.getEvents = function (req, res, promise) {
     const latPerKilo = 0.009009;
     const lngPerKilo = 0.011764;
-
-    console.log(req.body);
 
     if (req.body.latitude == null || req.body.latitude == undefined) {
         promise.reject(new Error('latitudeShouldNotBeEmpty'));
@@ -109,7 +110,7 @@ exports.getEvents = function (req, res, promise) {
             },
             include: [
                 { model: User, as: 'holder', attributes: ['userName']},
-                { model: User, as: 'participantList', attributes: ['userName'], where: {id: req.body.userId}}],
+                { model: User, as: 'participantList', attributes: ['userName', 'id'], where: {id: req.body.userId}}],
             where: {
                 startTime: {$lt: Date.now()}
             }
@@ -146,5 +147,98 @@ exports.getEvents = function (req, res, promise) {
             promise.reject(new Error(e));
         })
     }
+    return promise;
+};
+
+exports.joinEvent = function (req, res, promise) {
+
+    console.log(req.body);
+    var cur;
+
+    if (req.body.userId == null || req.body.userId == undefined) {
+        promise.reject();
+        return promise;
+    }
+
+    if (req.body.eventId == null || req.body.eventId == undefined) {
+        promise.reject();
+        return promise;
+    }
+
+    Event.findById(req.body.eventId).then(function(event) {
+        cur = event.currentPpl;
+        if(event.holderId == req.body.userId)
+            throw 'holderCannotJoinSelfEvent';
+        if(event.currentPpl == event.maxPpl-1)
+            throw 'eventFull';
+    }).then(function () {
+        return Participation.findOrCreate({
+            where: {
+                userId: req.body.userId,
+                eventId: req.body.eventId
+            },
+            defaults: {attendence: false}
+        })
+    }).spread(function (participation, created) {
+        if(!created)
+            throw 'alreadyJoined';
+        return Event.update({
+            currentPpl: cur +1
+        }, {where: {id: req.body.eventId}})
+
+    }).then(function () {
+        res.send({
+            errorMsg: null
+        });
+        promise.resolve();
+    }).catch(function(e){
+        if (e == 'holderCannotJoinSelfEvent' || e == 'eventFull' || 'alreadyJoined'){
+            res.send({
+                errorMsg: e
+            });
+            promise.resolve();
+        } else {
+            promise.reject();
+        }
+
+    });
+    return promise;
+};
+
+exports.quitEvent = function (req, res, promise) {
+    console.log(req.body);
+    var cur;
+
+    if (req.body.userId == null || req.body.userId == undefined) {
+        promise.reject();
+        return promise;
+    }
+
+    if (req.body.eventId == null || req.body.eventId == undefined) {
+        promise.reject();
+        return promise;
+    }
+
+    Event.findById(req.body.eventId).then(function(event) {
+        cur = event.currentPpl;
+    }).then(function () {
+        return Participation.destroy({where: {
+            eventId: req.body.eventId,
+            userId: req.body.userId
+        }});
+    }).then(function () {
+        return Event.update({
+            currentPpl: cur -1
+        }, {where: {id: req.body.eventId}});
+    }).then(function () {
+        res.send({
+           errorMsg: null
+        });
+        promise.resolve();
+    }).catch(function (e) {
+        res.send({
+            errorMsg: e
+        });
+    });
     return promise;
 };

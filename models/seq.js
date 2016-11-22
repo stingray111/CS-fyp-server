@@ -5,6 +5,6 @@ module.exports = new Sequelize(env.DB_NAME, env.DB_USERNAME, env.DB_PASSWORD, {
     dialect: env.DB_TYPE,
     define : {
         freezeTableName : true,
-        paranoid: true
+        paranoid: false
     }
 });

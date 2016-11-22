@@ -21,4 +21,8 @@ router.post('/api/get-events', mw(eventCtrl.getEvents));
 
 router.post('/api/push-event', mw(eventCtrl.pushEvent));
 
+router.post('/api/join-event', mw(eventCtrl.joinEvent));
+
+router.post('/api/quit-event', mw(eventCtrl.quitEvent));
+
 module.exports = router;

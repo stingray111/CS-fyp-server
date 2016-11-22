@@ -13,10 +13,11 @@
     "express": "~4.14.0",
     "express-session": "^1.14.0",
     "jade": "~1.11.0",
+    "moment": "^2.16.0",
     "morgan": "~1.7.0",
-    "serve-favicon": "~2.3.0",
     "mysql": "^2.11.1",
-    "sequelize": "^3.23.6"
+    "sequelize": "^3.23.6",
+    "serve-favicon": "~2.3.0"
   },
   "devDependencies": {
     "chai": "^3.5.0",
