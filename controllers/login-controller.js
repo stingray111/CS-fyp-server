@@ -52,7 +52,8 @@ exports.login = function (req, res, promise) {
     var respond = {
         isSuccessful: false,
         errorMsg: null,
-        token: null
+        token: null,
+        username: null
     };
 
     var findUser;
@@ -65,6 +66,7 @@ exports.login = function (req, res, promise) {
                     respond.errorMsg = 'userNotfound';
                     throw 'userNotfound';
                 }
+                respond.username = entry.userName;
                 return Promise.resolve(entry);
             })
     } else {
@@ -75,6 +77,7 @@ exports.login = function (req, res, promise) {
                     respond.errorMsg = 'userNotfound';
                     throw 'userNotfound';
                 }
+                respond.username = entry.userName;
                 return Promise.resolve(entry);
             })
     }
@@ -105,8 +108,8 @@ exports.login = function (req, res, promise) {
         //     token: loginStatus.id
         // };
         res.send(respond);
+        console.log(respond);
         promise.resolve();
-        console.log('login no problem')
     }).catch(function (e) {
         console.log(e);
         if (e == 'userNotfound' || e == 'passwordWrong') {

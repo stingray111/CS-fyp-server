@@ -39,8 +39,8 @@ exports.getEvent = function (req, res, promise) {
                 [sequelize.fn('date_format', sequelize.col('startTime'), '%d/%m %H:%i'), 'startTime_formated']]
         },
         include: [
-            { model: User, as: 'holder', attributes: ['userName']},
-            { model: User, as: 'participantList', attributes: ['userName', 'id']}
+            {model: User, as: 'holder', attributes: ['userName', 'id']},
+            {model: User, as: 'participantList', attributes: ['userName', 'id']}
         ],
         where: {id: req.body.id}
     }).then(function (event) {
@@ -84,9 +84,9 @@ exports.getEvents = function (req, res, promise) {
         Event.findAll({
             attributes: {
                 include: [[sequelize.fn('date_format', sequelize.col('deadlineTime'), '%d/%m %H:%i'), 'deadlineTime_formated'],
-                [sequelize.fn('date_format', sequelize.col('startTime'), '%d/%m %H:%i'), 'startTime_formated']]
+                    [sequelize.fn('date_format', sequelize.col('startTime'), '%d/%m %H:%i'), 'startTime_formated']]
             },
-            include: [{ model: User, as: 'holder', attributes: ['userName']}],
+            include: [{model: User, as: 'holder', attributes: ['userName']}],
             where: {
                 // todo fix range issue in pole??
                 latitude: {$between: [req.body.latitude - 50 * latPerKilo, req.body.latitude + 50 * latPerKilo]},
@@ -109,8 +109,8 @@ exports.getEvents = function (req, res, promise) {
                     [sequelize.fn('date_format', sequelize.col('startTime'), '%d/%m %H:%i'), 'startTime_formated']]
             },
             include: [
-                { model: User, as: 'holder', attributes: ['userName']},
-                { model: User, as: 'participantList', attributes: ['userName', 'id'], where: {id: req.body.userId}}],
+                {model: User, as: 'holder', attributes: ['userName']},
+                {model: User, as: 'participantList', attributes: ['userName', 'id'], where: {id: req.body.userId}}],
             where: {
                 startTime: {$lt: Date.now()}
             }
@@ -131,8 +131,8 @@ exports.getEvents = function (req, res, promise) {
                     [sequelize.fn('date_format', sequelize.col('startTime'), '%d/%m %H:%i'), 'startTime_formated']]
             },
             include: [
-                { model: User, as: 'holder', attributes: ['userName']},
-                { model: User, as: 'participantList', attributes: ['userName'], where: {id: req.body.userId}}],
+                {model: User, as: 'holder', attributes: ['userName']},
+                {model: User, as: 'participantList', attributes: ['userName'], where: {id: req.body.userId}}],
             where: {
                 startTime: {$gt: Date.now()}
             }
@@ -165,11 +165,11 @@ exports.joinEvent = function (req, res, promise) {
         return promise;
     }
 
-    Event.findById(req.body.eventId).then(function(event) {
+    Event.findById(req.body.eventId).then(function (event) {
         cur = event.currentPpl;
-        if(event.holderId == req.body.userId)
+        if (event.holderId == req.body.userId)
             throw 'holderCannotJoinSelfEvent';
-        if(event.currentPpl == event.maxPpl-1)
+        if (event.currentPpl == event.maxPpl - 1)
             throw 'eventFull';
     }).then(function () {
         return Participation.findOrCreate({
@@ -180,10 +180,10 @@ exports.joinEvent = function (req, res, promise) {
             defaults: {attendence: false}
         })
     }).spread(function (participation, created) {
-        if(!created)
+        if (!created)
             throw 'alreadyJoined';
         return Event.update({
-            currentPpl: cur +1
+            currentPpl: cur + 1
         }, {where: {id: req.body.eventId}})
 
     }).then(function () {
@@ -191,8 +191,8 @@ exports.joinEvent = function (req, res, promise) {
             errorMsg: null
         });
         promise.resolve();
-    }).catch(function(e){
-        if (e == 'holderCannotJoinSelfEvent' || e == 'eventFull' || 'alreadyJoined'){
+    }).catch(function (e) {
+        if (e == 'holderCannotJoinSelfEvent' || e == 'eventFull' || 'alreadyJoined') {
             res.send({
                 errorMsg: e
             });
@@ -219,26 +219,55 @@ exports.quitEvent = function (req, res, promise) {
         return promise;
     }
 
-    Event.findById(req.body.eventId).then(function(event) {
+    Event.findById(req.body.eventId).then(function (event) {
         cur = event.currentPpl;
     }).then(function () {
-        return Participation.destroy({where: {
-            eventId: req.body.eventId,
-            userId: req.body.userId
-        }});
+        return Participation.destroy({
+            where: {
+                eventId: req.body.eventId,
+                userId: req.body.userId
+            }
+        });
     }).then(function () {
         return Event.update({
-            currentPpl: cur -1
+            currentPpl: cur - 1
         }, {where: {id: req.body.eventId}});
     }).then(function () {
         res.send({
-           errorMsg: null
+            errorMsg: null
         });
         promise.resolve();
     }).catch(function (e) {
         res.send({
             errorMsg: e
         });
+    });
+    return promise;
+};
+
+exports.deleteEvent = function (req, res, promise) {
+    console.log(req.body);
+
+    Event.destroy({
+        where: {
+            id: req.body.eventId
+        }
+    }).then(function (affectedRows) {
+        if (affectedRows !== 1)
+            throw 'cannotDeleteEvent';
+        promise.resolve();
+        res.send({
+            errorMsg: null
+        });
+    }).catch(function (e) {
+        if (e == 'cannotDeleteEvent') {
+            res.send({
+                errorMsg: e
+            });
+            promise.resolve();
+        } else {
+            promise.reject();
+        }
     });
     return promise;
 };

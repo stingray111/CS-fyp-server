@@ -25,4 +25,6 @@ router.post('/api/join-event', mw(eventCtrl.joinEvent));
 
 router.post('/api/quit-event', mw(eventCtrl.quitEvent));
 
+router.post('/api/delete-event', mw(eventCtrl.deleteEvent));
+
 module.exports = router;
