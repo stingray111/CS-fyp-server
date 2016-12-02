@@ -124,14 +124,16 @@ exports.login = function (req, res, promise) {
 };
 
 exports.logout = function (req, res, promise) {
-    LoginStatus.destroy({where: {id: req.locals.loginStatus.id}})
+    LoginStatus.destroy({where: {id: req.body.token}})
         .then(function (affectedRows) {
             if (affectedRows !== 1)
                 throw 'no such token';
-            promise.resolve();
             res.send({
                 errorMsg: null
             });
-        }).catch(promise.reject);
+            promise.resolve();
+        }).catch(function(e) {
+            promise.reject(e);
+        });
     return promise;
 };
