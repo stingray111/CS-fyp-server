@@ -54,6 +54,7 @@ exports.getEvent = function (req, res, promise) {
 exports.getEvents = function (req, res, promise) {
     const latPerKilo = 0.009009;
     const lngPerKilo = 0.011764;
+    var data = [];
 
     if (req.body.latitude == null || req.body.latitude == undefined) {
         promise.reject(new Error('latitudeShouldNotBeEmpty'));
@@ -94,9 +95,10 @@ exports.getEvents = function (req, res, promise) {
                 deadlineTime: {$gt: Date.now()}
             }
         }).then(function (events) {
+            var temp = JSON.parse(JSON.stringify(events));
             res.send({
                 errorMsg: null,
-                data: events
+                data: temp
             });
             promise.resolve();
         }).catch(function (e) {
@@ -109,16 +111,31 @@ exports.getEvents = function (req, res, promise) {
                     [sequelize.fn('date_format', sequelize.col('startTime'), '%d/%m %H:%i'), 'startTime_formated']]
             },
             include: [
-                {model: User, as: 'holder', attributes: ['userName']},
+                {model: User, as: 'holder', attributes: ['userName', 'id']},
                 {model: User, as: 'participantList', attributes: ['userName', 'id'], where: {id: req.body.userId}}],
             where: {
                 startTime: {$lt: Date.now()}
-            }
+            },
+            raw: true
         }).then(function (events) {
-            console.log(JSON.stringify(events));
+            data = JSON.parse(JSON.stringify(events));
+            return Event.findAll({
+                attributes: {
+                    include: [[sequelize.fn('date_format', sequelize.col('deadlineTime'), '%d/%m %H:%i'), 'deadlineTime_formated'],
+                        [sequelize.fn('date_format', sequelize.col('startTime'), '%d/%m %H:%i'), 'startTime_formated']]
+                },
+                include: [
+                    {model: User, as: 'holder', attributes: ['userName', 'id'], where: {id: req.body.userId}},
+                    {model: User, as: 'participantList', attributes: ['userName', 'id']}],
+                where: {
+                    startTime: {$lt: Date.now()}
+                }
+            });
+        }).then(function (events2) {
+            Array.prototype.push.apply(data, JSON.parse(JSON.stringify(events2)));
             res.send({
                 errorMsg: null,
-                data: events
+                data: data
             });
             promise.resolve();
         }).catch(function (e) {
@@ -131,16 +148,30 @@ exports.getEvents = function (req, res, promise) {
                     [sequelize.fn('date_format', sequelize.col('startTime'), '%d/%m %H:%i'), 'startTime_formated']]
             },
             include: [
-                {model: User, as: 'holder', attributes: ['userName']},
-                {model: User, as: 'participantList', attributes: ['userName'], where: {id: req.body.userId}}],
+                {model: User, as: 'holder', attributes: ['userName', 'id']},
+                {model: User, as: 'participantList', attributes: ['userName', 'id'], where: {id: req.body.userId}}],
             where: {
                 startTime: {$gt: Date.now()}
             }
         }).then(function (events) {
-            console.log(JSON.stringify(events));
+            data = JSON.parse(JSON.stringify(events));
+            return Event.findAll({
+                attributes: {
+                    include: [[sequelize.fn('date_format', sequelize.col('deadlineTime'), '%d/%m %H:%i'), 'deadlineTime_formated'],
+                        [sequelize.fn('date_format', sequelize.col('startTime'), '%d/%m %H:%i'), 'startTime_formated']]
+                },
+                include: [
+                    {model: User, as: 'holder', attributes: ['userName', 'id'], where: {id: req.body.userId}},
+                    {model: User, as: 'participantList', attributes: ['userName', 'id']}],
+                where: {
+                    startTime: {$gt: Date.now()}
+                }
+            });
+        }).then(function (events2) {
+            Array.prototype.push.apply(data, JSON.parse(JSON.stringify(events2)));
             res.send({
                 errorMsg: null,
-                data: events
+                data: data
             });
             promise.resolve();
         }).catch(function (e) {
