@@ -35,8 +35,8 @@ exports.getEvent = function (req, res, promise) {
 
     Event.findOne({
         attributes: {
-            include: [[sequelize.fn('date_format', sequelize.col('deadlineTime'), '%d/%m %H:%i'), 'deadlineTime_formated'],
-                [sequelize.fn('date_format', sequelize.col('startTime'), '%d/%m %H:%i'), 'startTime_formated']]
+            include: [[sequelize.fn('date_format', sequelize.col('deadlineTime'), '%Y/%m/%d %H:%i'), 'deadlineTime_formated'],
+                [sequelize.fn('date_format', sequelize.col('startTime'), '%Y/%m/%d %H:%i'), 'startTime_formated']]
         },
         include: [
             {model: User, as: 'holder', attributes: ['userName', 'id']},
@@ -84,8 +84,8 @@ exports.getEvents = function (req, res, promise) {
     if (req.body.mode == 1) {
         Event.findAll({
             attributes: {
-                include: [[sequelize.fn('date_format', sequelize.col('deadlineTime'), '%d/%m %H:%i'), 'deadlineTime_formated'],
-                    [sequelize.fn('date_format', sequelize.col('startTime'), '%d/%m %H:%i'), 'startTime_formated']]
+                include: [[sequelize.fn('date_format', sequelize.col('deadlineTime'), '%Y/%m/%d %H:%i'), 'deadlineTime_formated'],
+                    [sequelize.fn('date_format', sequelize.col('startTime'), '%Y/%m/%d %H:%i'), 'startTime_formated']]
             },
             include: [{model: User, as: 'holder', attributes: ['userName']}],
             where: {
@@ -107,8 +107,8 @@ exports.getEvents = function (req, res, promise) {
     } else if (req.body.mode == 2) {  // for history
         Event.findAll({
             attributes: {
-                include: [[sequelize.fn('date_format', sequelize.col('deadlineTime'), '%d/%m %H:%i'), 'deadlineTime_formated'],
-                    [sequelize.fn('date_format', sequelize.col('startTime'), '%d/%m %H:%i'), 'startTime_formated']]
+                include: [[sequelize.fn('date_format', sequelize.col('deadlineTime'), '%Y/%m/%d %H:%i'), 'deadlineTime_formated'],
+                    [sequelize.fn('date_format', sequelize.col('startTime'), '%Y/%m/%d %H:%i'), 'startTime_formated']]
             },
             include: [
                 {model: User, as: 'holder', attributes: ['userName', 'id']},
@@ -121,8 +121,8 @@ exports.getEvents = function (req, res, promise) {
             data = JSON.parse(JSON.stringify(events));
             return Event.findAll({
                 attributes: {
-                    include: [[sequelize.fn('date_format', sequelize.col('deadlineTime'), '%d/%m %H:%i'), 'deadlineTime_formated'],
-                        [sequelize.fn('date_format', sequelize.col('startTime'), '%d/%m %H:%i'), 'startTime_formated']]
+                    include: [[sequelize.fn('date_format', sequelize.col('deadlineTime'), '%Y/%m/%d %H:%i'), 'deadlineTime_formated'],
+                        [sequelize.fn('date_format', sequelize.col('startTime'), '%Y/%m/%d %H:%i'), 'startTime_formated']]
                 },
                 include: [
                     {model: User, as: 'holder', attributes: ['userName', 'id'], where: {id: req.body.userId}},
@@ -144,8 +144,8 @@ exports.getEvents = function (req, res, promise) {
     } else if (req.body.mode == 3) {
         Event.findAll({
             attributes: {
-                include: [[sequelize.fn('date_format', sequelize.col('deadlineTime'), '%d/%m %H:%i'), 'deadlineTime_formated'],
-                    [sequelize.fn('date_format', sequelize.col('startTime'), '%d/%m %H:%i'), 'startTime_formated']]
+                include: [[sequelize.fn('date_format', sequelize.col('deadlineTime'), '%Y/%m/%d %H:%i'), 'deadlineTime_formated'],
+                    [sequelize.fn('date_format', sequelize.col('startTime'), '%Y/%m/%d %H:%i'), 'startTime_formated']]
             },
             include: [
                 {model: User, as: 'holder', attributes: ['userName', 'id']},
@@ -157,8 +157,8 @@ exports.getEvents = function (req, res, promise) {
             data = JSON.parse(JSON.stringify(events));
             return Event.findAll({
                 attributes: {
-                    include: [[sequelize.fn('date_format', sequelize.col('deadlineTime'), '%d/%m %H:%i'), 'deadlineTime_formated'],
-                        [sequelize.fn('date_format', sequelize.col('startTime'), '%d/%m %H:%i'), 'startTime_formated']]
+                    include: [[sequelize.fn('date_format', sequelize.col('deadlineTime'), '%Y/%m/%d %H:%i'), 'deadlineTime_formated'],
+                        [sequelize.fn('date_format', sequelize.col('startTime'), '%Y/%m/%d %H:%i'), 'startTime_formated']]
                 },
                 include: [
                     {model: User, as: 'holder', attributes: ['userName', 'id'], where: {id: req.body.userId}},
