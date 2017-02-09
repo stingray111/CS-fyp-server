@@ -41,6 +41,7 @@ exports.getEvent = function (req, res, promise) {
         include: [
             {model: User, as: 'holder', attributes: ['userName', 'id']},
             {model: User, as: 'participantList', attributes: ['userName', 'id']}
+            //{model: Participation, as: 'attendence'}
         ],
         where: {id: req.body.id}
     }).then(function (event) {
@@ -216,7 +217,10 @@ exports.joinEvent = function (req, res, promise) {
         return Event.update({
             currentPpl: cur + 1
         }, {where: {id: req.body.eventId}})
-
+    }).then(function () {
+        return User.update({
+            attendEventNum: sequelize.literal('attendEventNum +1')
+        }, {where: {id: req.body.userId}})
     }).then(function () {
         res.send({
             errorMsg: null
@@ -263,6 +267,10 @@ exports.quitEvent = function (req, res, promise) {
         return Event.update({
             currentPpl: cur - 1
         }, {where: {id: req.body.eventId}});
+    }).then(function () {
+        return User.update({
+            attendEventNum: sequelize.literal('attendEventNum -1')
+        }, {where: {id: req.body.userId}})
     }).then(function () {
         res.send({
             errorMsg: null

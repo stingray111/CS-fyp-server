@@ -9,6 +9,10 @@ var userCtrl = require('../controllers/user-controller');
 
 router.post('/api/register', mw(registerCtrl.register));
 
+router.post('/api/post-rate', mw(userCtrl.postRate));
+
+router.post('/api/post-self-rate', mw(userCtrl.postSelfRate));
+
 router.post('/api/login', mw(loginCtrl.login));
 
 router.post('/api/logout', mw(loginCtrl.logout));

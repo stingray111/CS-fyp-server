@@ -86,6 +86,21 @@ exports.register = function (req, res, promise) {
             proPic: req.body.proPic,
             phone: req.body.phone,
             description: req.body.description,
+            isSelfRated: false,
+            selfExtraversion: 3,
+            selfAgreeableness: 3,
+            selfConscientiousness: 3,
+            selfNeuroticism: 3,
+            selfOpenness: 3,
+            adjustmentExtraversionWeightedSum: 0,
+            adjustmentAgreeablenessWeightedSum: 0,
+            adjustmentConscientiousnessWeightedSum: 0,
+            adjustmentNeuroticismWeightedSum: 0,
+            adjustmentOpennessWeightedSum: 0,
+            adjustmentWeight: 1,
+            attendEventNum: 0,
+            abcentEventNum: 0,
+            holdEventNum: 0,
             level: 1
         })
     }).then(function (user) {

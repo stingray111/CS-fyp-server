@@ -1,5 +1,5 @@
 var seq = require('./../seq');
-var sequence = ['participant-list', 'user', 'login-status','event'];
+var sequence = ['participant-list.js', 'user', 'login-status','event','rate'];
 
 exports.createDB = function () {
     var p = seq.query('SET foreign_key_checks=0');

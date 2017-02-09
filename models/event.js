@@ -4,6 +4,7 @@ var Sequelize = require('sequelize');
 // todo change back to our feed model
 var Event = seq.define('Event', {
     id : {
+        unique: true,
         primaryKey: true,
         type: Sequelize.INTEGER,
         autoIncrement: true

@@ -4,6 +4,7 @@ var Sequelize = require('sequelize');
 // todo change back to our user model
 var User = seq.define('User', {
     id : {
+        unique: true,
         primaryKey: true,
         field: 'id',
         type: Sequelize.INTEGER,
@@ -25,7 +26,18 @@ var User = seq.define('User', {
     email :Sequelize.STRING,
     phone: Sequelize.STRING,
     level: Sequelize.INTEGER,
-    rating: Sequelize.INTEGER
+    isSelfRated: Sequelize.BOOLEAN,
+    selfExtraversion: Sequelize.FLOAT,
+    selfAgreeableness: Sequelize.FLOAT,
+    selfConscientiousness: Sequelize.FLOAT,
+    selfNeuroticism: Sequelize.FLOAT,
+    selfOpenness: Sequelize.FLOAT,
+    adjustmentExtraversionWeightedSum: Sequelize.INTEGER,
+    adjustmentAgreeablenessWeightedSum: Sequelize.INTEGER,
+    adjustmentConscientiousnessWeightedSum: Sequelize.INTEGER,
+    adjustmentNeuroticismWeightedSum: Sequelize.INTEGER,
+    adjustmentOpennessWeightedSum: Sequelize.INTEGER,
+    adjustmentWeight: Sequelize.INTEGER
 });
 
 module.exports = User;
