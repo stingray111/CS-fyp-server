@@ -95,7 +95,8 @@ exports.postRate = function (req, res, promise) {
             openness: req.body.openness*c,
             userId: req.body.userId,
             otherUserId: req.body.otherUserId,
-            weight: c
+            weight: c,
+            eventId: req.body.eventId
         })
     }).then(function () {
         return seq.query("SELECT SUM(b.extraversion) as e, SUM(b.agreeableness) as a, SUM(b.conscientiousness) as c, SUM(b.neuroticism) as n, SUM(b.openness) as o, SUM(b.weight) as w FROM Rate As b INNER JOIN (SELECT MAX(id) as tt FROM Rate GROUP BY otherUserId LIMIT 10) AS a ON b.id = a.tt");

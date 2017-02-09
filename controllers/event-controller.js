@@ -1,5 +1,6 @@
 var Event = require('../models/event');
 var User = require('../models/user');
+var Rate = require('../models/rate');
 var Participation = require('../models/participant-list');
 var hasher = require('../lib/hasher');
 var sequelize = require('sequelize');
@@ -31,7 +32,13 @@ exports.pushEvent = function (req, res, promise) {
 
 exports.getEvent = function (req, res, promise) {
 
+    console.log(req.body);
+
     //todo validation
+
+    var eventTS = {
+        rates: null
+    };
 
     Event.findOne({
         attributes: {
@@ -41,13 +48,25 @@ exports.getEvent = function (req, res, promise) {
         include: [
             {model: User, as: 'holder', attributes: ['userName', 'id']},
             {model: User, as: 'participantList', attributes: ['userName', 'id']}
-            //{model: Participation, as: 'attendence'}
         ],
         where: {id: req.body.id}
     }).then(function (event) {
-        console.log(JSON.stringify(event));
-        res.send(event);
+        eventTS = event.get({
+            plain: true
+        });
+    }).then(function () {
+        return Rate.findAll({where: {
+            userId: req.body.userId,
+            eventId: req.body.id
+        }, raw: true })
+    }).then(function (rate) {
+        if (rate != null)
+            eventTS.rates = rate;
+        console.log(eventTS);
+        res.send(eventTS);
         promise.resolve();
+    }).catch(function (e) {
+        promise.reject(new Error(e));
     });
     return promise;
 };

@@ -16,7 +16,8 @@ var Rate = seq.define('Rate', {
     openness: Sequelize.FLOAT,
     userId: Sequelize.INTEGER,
     otherUserId: Sequelize.INTEGER,
-    weight: Sequelize.INTEGER
+    weight: Sequelize.INTEGER,
+    eventId: Sequelize.INTEGER
 });
 
 module.exports = Rate;
