@@ -25,7 +25,8 @@ var User = seq.define('User', {
     email :Sequelize.STRING,
     phone: Sequelize.STRING,
     level: Sequelize.INTEGER,
-    rating: Sequelize.INTEGER
+    rating: Sequelize.INTEGER,
+    msgToken: Sequelize.STRING
 });
 
 module.exports = User;
