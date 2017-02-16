@@ -94,23 +94,24 @@ exports.login = function (req, res, promise) {
         // var token = Date.now().toString() + req.body.ip + loginTokenSalt;
         // var tokenHash = crypto.createHash('sha256').update(token).digest('base64');
         var tokenHash = hasher.hash(Date.now().toString() + req.body.ip, hasher.hashVal.loginToken);
-        return LoginStatus.create({
+        return [LoginStatus.create({
             id : tokenHash,
             userId: entry.id,
             ipaddr: req.body.ip,
             platform: req.body.platform,
 	    msgToken: entry.msgToken
-        })
-    }).then(function (loginStatus) {
+        }), entry];
+    }).spread(function (loginStatus, user) {
         respond.token = loginStatus.id;
         respond.userId = loginStatus.userId;
         respond.isSuccessful = true;
 	respond.msgToken = loginStatus.msgToken;
+        respond.self = user;
         // req.locals.testing = {
         //     token: loginStatus.id
         // };
-        res.send(respond);
         console.log(respond);
+        res.send(respond);
         promise.resolve();
     }).catch(function (e) {
         console.log(e);
