@@ -9,7 +9,8 @@ var LoginStatus = seq.define('LoginStatus', {
     },
     userId: Sequelize.INTEGER,
     ipaddr: Sequelize.STRING,
-    platform: Sequelize.STRING
+    platform: Sequelize.STRING,
+	msgToken: Sequelize.STRING 
 });
 
 module.exports = LoginStatus;

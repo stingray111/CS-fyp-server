@@ -98,12 +98,14 @@ exports.login = function (req, res, promise) {
             id : tokenHash,
             userId: entry.id,
             ipaddr: req.body.ip,
-            platform: req.body.platform
+            platform: req.body.platform,
+	    msgToken: entry.msgToken
         })
     }).then(function (loginStatus) {
         respond.token = loginStatus.id;
         respond.userId = loginStatus.userId;
         respond.isSuccessful = true;
+	respond.msgToken = loginStatus.msgToken;
         // req.locals.testing = {
         //     token: loginStatus.id
         // };

@@ -115,7 +115,6 @@ exports.register = function (req, res, promise) {
             level: 1
         })
     }).then(function (user) {
-	    console.log("Success final", "");
         if (user) {
             promise.resolve
 

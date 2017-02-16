@@ -37,9 +37,8 @@ var User = seq.define('User', {
     adjustmentConscientiousnessWeightedSum: Sequelize.INTEGER,
     adjustmentNeuroticismWeightedSum: Sequelize.INTEGER,
     adjustmentOpennessWeightedSum: Sequelize.INTEGER,
-    adjustmentWeight: Sequelize.INTEGER
-    rating: Sequelize.INTEGER,
-    msgToken: Sequelize.STRING
+    adjustmentWeight: Sequelize.INTEGER,
+    msgToken: Sequelize.STRING(1024)
 });
 
 module.exports = User;
