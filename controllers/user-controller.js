@@ -99,24 +99,32 @@ exports.postRate = function (req, res, promise) {
             eventId: req.body.eventId
         })
     }).then(function () {
-        return seq.query("SELECT SUM(b.extraversion) as e, SUM(b.agreeableness) as a, SUM(b.conscientiousness) as c, SUM(b.neuroticism) as n, SUM(b.openness) as o, SUM(b.weight) as w FROM Rate As b INNER JOIN (SELECT MAX(id) as tt FROM Rate GROUP BY otherUserId LIMIT 10) AS a ON b.id = a.tt");
+        return Rate.count({where:{otherUserId: req.body.otherUserId}});
+    }).then(function (counts) {
+        if (counts > 5)
+            return seq.query("SELECT SUM(b.extraversion) as e, SUM(b.agreeableness) as a, SUM(b.conscientiousness) as c, SUM(b.neuroticism) as n, SUM(b.openness) as o, SUM(b.weight) as w FROM Rate As b INNER JOIN (SELECT MAX(id) as tt FROM Rate GROUP BY otherUserId LIMIT 30) AS a ON b.id = a.tt");
+        else
+            return [null,null];
     }).spread(function(results, metadata) {
-        console.log(results);
-        return User.update({
-            adjustmentExtraversionWeightedSum: results[0].e,
-            adjustmentAgreeablenessWeightedSum: results[0].a,
-            adjustmentConscientiousnessWeightedSum: results[0].c,
-            adjustmentNeuroticismWeightedSum: results[0].n,
-            adjustmentOpennessWeightedSum: results[0].o,
-            adjustmentWeight: results[0].w,
-            isSelfRated: true
-        }, {where: {id: req.body.otherUserId }});
+        if (results != null)
+            return User.update({
+                adjustmentExtraversionWeightedSum: results[0].e,
+                adjustmentAgreeablenessWeightedSum: results[0].a,
+                adjustmentConscientiousnessWeightedSum: results[0].c,
+                adjustmentNeuroticismWeightedSum: results[0].n,
+                adjustmentOpennessWeightedSum: results[0].o,
+                adjustmentWeight: results[0].w,
+                isSelfRated: true
+            }, {where: {id: req.body.otherUserId }});
+        else {
+            return null;
+        }
     }).then(function () {
         res.send({
             errorMsg: null
         })
     }).catch(function (e) {
-        console.log(e);
+        console.log('error: '+ e);
         promise.reject();
     });
     return promise;
