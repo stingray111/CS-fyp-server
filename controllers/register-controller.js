@@ -1,6 +1,8 @@
 var User = require('../models/user');
 var crypto = require('crypto');
 var hasher = require('../lib/hasher');
+var admin = require("firebase-admin");
+
 
 exports.register = function (req, res, promise) {
     /*
@@ -75,6 +77,14 @@ exports.register = function (req, res, promise) {
     }).then(function (entry) {
         if (entry)
             throw 'SameEmailFound';
+    }).then(function(){
+	//firebase account create
+	return admin.auth().createCustomToken(req.body.userName)
+		.catch(function(e){
+			throw e;
+		})
+    }).then(function(firebaseToken){
+	    console.log("Success create", firebaseToken);
         return User.create({
             userName: req.body.userName,
             email: req.body.email,
@@ -101,11 +111,14 @@ exports.register = function (req, res, promise) {
             attendEventNum: 0,
             abcentEventNum: 0,
             holdEventNum: 0,
+	    msgToken: firebaseToken,
             level: 1
         })
     }).then(function (user) {
+	    console.log("Success final", "");
         if (user) {
-            promise.resolve();
+            promise.resolve
+
             res.send({
                 isSuccessful: true,
                 errorMsg: null
@@ -129,9 +142,15 @@ exports.register = function (req, res, promise) {
             });
             console.log('errorMsg sent: ' + e);
         } else {
-            promise.reject(e);
+            promise.resolve;
+            console.log('unknown error: ' + e);
+	    res.send({
+		isSuccessful: false,
+		errorMsg: e
+	    });
         }
     });
+
     return promise;
 };
 

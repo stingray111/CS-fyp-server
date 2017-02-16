@@ -17,8 +17,8 @@ var https = require('https');
 var port = normalizePort(process.env.PORT || '3000');
 app.set('port', port);
 
-//var httpsport = normalizePort(process.env.PORT || '3000');
-//app.set('httpsport', httpsport);
+var httpsport = normalizePort(process.env.PORT || '3001');
+app.set('httpsport', httpsport);
 
 /**
  * Create HTTP server.
@@ -101,3 +101,16 @@ function onListening() {
     : 'port ' + addr.port;
   debug('Listening on ' + bind);
 }
+
+
+//firebase
+var admin = require("firebase-admin");
+var admin = require("firebase-admin");
+
+var serviceAccount = require("../serviceAccountKey.json");
+
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount),
+  databaseURL: "https://cs-fyp.firebaseio.com"
+});
+
