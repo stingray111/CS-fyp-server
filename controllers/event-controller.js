@@ -47,7 +47,8 @@ exports.getEvent = function (req, res, promise) {
         },
         include: [
             {model: User, as: 'holder', attributes: ['userName', 'id']},
-            {model: User, as: 'participantList', attributes: ['userName', 'id']}
+            {model: User, as: 'participantList', attributes: ['userName', 'id']},
+            {model: Participation, as: 'attendace'}
         ],
         where: {id: req.body.id}
     }).then(function (event) {

@@ -17,6 +17,7 @@ module.exports = ParticipantList;
 
 var Event = require('./event');
 ParticipantList.belongsTo(Event, {
+    as: 'attendance',
     foreignKey: 'eventId'
 });
 
