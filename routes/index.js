@@ -31,4 +31,6 @@ router.post('/api/quit-event', mw(eventCtrl.quitEvent));
 
 router.post('/api/delete-event', mw(eventCtrl.deleteEvent));
 
+router.post('/api/change-attendance', mw(eventCtrl.changeAttendance));
+
 module.exports = router;
