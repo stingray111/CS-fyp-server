@@ -307,6 +307,8 @@ exports.quitEvent = function (req, res, promise) {
 exports.deleteEvent = function (req, res, promise) {
     console.log(req.body);
 
+    // todo validation
+
     Event.destroy({
         where: {
             id: req.body.eventId
@@ -327,6 +329,28 @@ exports.deleteEvent = function (req, res, promise) {
         } else {
             promise.reject();
         }
+    });
+    return promise;
+};
+
+exports.changeAttendance = function(req, res, promise) {
+    // todo validation
+
+    console.log(req.body);
+
+    Participation.update({attendance: req.body.attendance},{where: {
+        userId : req.body.userId,
+        eventId : req.body.eventId
+    }}).then(function () {
+        res.send({
+            errorMsg: null
+        });
+        promise.resolve();
+    }).catch(function (e) {
+        res.send({
+            errorMsg: e
+        });
+        promise.reject();
     });
     return promise;
 };
