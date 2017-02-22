@@ -35,6 +35,11 @@ Event.belongsToMany(User, {
     otherKey: 'userId'
 });
 
+Event.hasMany(ParticipantList, {
+    as: 'attendance',
+    foreignKey: 'eventId'
+});
+
 Event.belongsTo(User, {
     as: 'holder',
     foreignKey: 'holderId'
