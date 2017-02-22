@@ -10,7 +10,7 @@ var ParticipantList = seq.define('ParticipantList', {
     },
     userId : Sequelize.INTEGER,
     eventId : Sequelize.INTEGER,
-    attendence: Sequelize.BOOLEAN
+    attendance: Sequelize.BOOLEAN
 });
 
 module.exports = ParticipantList;
