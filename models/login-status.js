@@ -1,15 +1,25 @@
 var seq = require('./seq');
 var Sequelize = require('sequelize');
 
-var LoginStatus = seq.define('LoginStatus', {
+var LoginStatus = seq.define('loginStatus', {
     id : {  //this is actually the token
         primaryKey: true,
         field: 'id',
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
+        allowNull: false
     },
-    userId: Sequelize.INTEGER,
-    ipaddr: Sequelize.STRING,
-    platform: Sequelize.STRING
+    userId : {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        validate: {isInt: true}
+    },
+    ipaddr: {
+        type: Sequelize.STRING,
+        validate: {isIP: true}
+    },
+    platform: {
+        type: Sequelize.STRING
+    }
 });
 
 module.exports = LoginStatus;

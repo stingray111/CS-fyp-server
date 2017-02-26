@@ -16,8 +16,8 @@ exports.pushEvent = function (req, res, promise) {
         latitude: req.body.latitude,
         longitude: req.body.longitude,
         description: req.body.description,
-        deadlineTime: moment(req.body.eventDeadline, "YYYY-MM-DD HH:mm").toDate(),
-        startTime: moment(req.body.eventStart, "YYYY-MM-DD HH:mm").toDate(),
+        deadlineTime: req.body.eventDeadline + ' -0', //moment(req.body.eventDeadline, "YYYY-MM-DD HH:mm").toDate(),
+        startTime: req.body.eventStart + ' -0', //moment(req.body.eventStart, "YYYY-MM-DD HH:mm").toDate(),
         currentPpl: 0,
         minPpl: req.body.minPpl,
         maxPpl: req.body.maxPpl
@@ -42,8 +42,8 @@ exports.getEvent = function (req, res, promise) {
 
     Event.findOne({
         attributes: {
-            include: [[sequelize.fn('date_format', sequelize.col('deadlineTime'), '%Y/%m/%d %H:%i'), 'deadlineTime_formated'],
-                [sequelize.fn('date_format', sequelize.col('startTime'), '%Y/%m/%d %H:%i'), 'startTime_formated']]
+            include: [[sequelize.fn('to_char', sequelize.col('deadlineTime'), 'YYYY/MM/DD HH24:MI'), 'deadlineTime_formated'],
+                [sequelize.fn('to_char', sequelize.col('startTime'), 'YYYY/MM/DD HH24:MI'), 'startTime_formated']]
         },
         include: [
             {model: User, as: 'holder', attributes: ['userName', 'id']},
@@ -77,26 +77,6 @@ exports.getEvents = function (req, res, promise) {
     const lngPerKilo = 0.011764;
     var data = [];
 
-    if (req.body.latitude == null || req.body.latitude == undefined) {
-        promise.reject(new Error('latitudeShouldNotBeEmpty'));
-        return promise;
-    }
-
-    if (req.body.longitude == null || req.body.longitude == undefined) {
-        promise.reject(new Error('longitudeShouldNotBeEmpty'));
-        return promise;
-    }
-
-    if (req.body.latitude > 90 || req.body.latitude < -90) {
-        promise.reject(new Error('latitudeOutOfRange'));
-        return promise;
-    }
-
-    if (req.body.longitude > 180 || req.body.longitude < -180) {
-        promise.reject(new Error('longitudeOutOfRange'));
-        return promise;
-    }
-
     if (req.body.mode > 3 || req.body.mode < 1) {
         promise.reject(new Error('modeNotExist'));
         return promise;
@@ -105,8 +85,8 @@ exports.getEvents = function (req, res, promise) {
     if (req.body.mode == 1) {
         Event.findAll({
             attributes: {
-                include: [[sequelize.fn('date_format', sequelize.col('deadlineTime'), '%Y/%m/%d %H:%i'), 'deadlineTime_formated'],
-                    [sequelize.fn('date_format', sequelize.col('startTime'), '%Y/%m/%d %H:%i'), 'startTime_formated']]
+                include: [[sequelize.fn('to_char', sequelize.col('deadlineTime'), 'YYYY/MM/DD HH24:MI'), 'deadlineTime_formated'],
+                    [sequelize.fn('to_char', sequelize.col('startTime'), 'YYYY/MM/DD HH24:MI'), 'startTime_formated']]
             },
             include: [{model: User, as: 'holder', attributes: ['userName']}],
             where: {
@@ -117,6 +97,7 @@ exports.getEvents = function (req, res, promise) {
             }
         }).then(function (events) {
             var temp = JSON.parse(JSON.stringify(events));
+            console.log(temp);
             res.send({
                 errorMsg: null,
                 data: temp
@@ -128,8 +109,8 @@ exports.getEvents = function (req, res, promise) {
     } else if (req.body.mode == 2) {  // for history
         Event.findAll({
             attributes: {
-                include: [[sequelize.fn('date_format', sequelize.col('deadlineTime'), '%Y/%m/%d %H:%i'), 'deadlineTime_formated'],
-                    [sequelize.fn('date_format', sequelize.col('startTime'), '%Y/%m/%d %H:%i'), 'startTime_formated']]
+                include: [[sequelize.fn('to_char', sequelize.col('deadlineTime'), 'YYYY/MM/DD HH24:MI'), 'deadlineTime_formated'],
+                    [sequelize.fn('to_char', sequelize.col('startTime'), 'YYYY/MM/DD HH24:MI'), 'startTime_formated']]
             },
             include: [
                 {model: User, as: 'holder', attributes: ['userName', 'id']},
@@ -142,8 +123,8 @@ exports.getEvents = function (req, res, promise) {
             data = JSON.parse(JSON.stringify(events));
             return Event.findAll({
                 attributes: {
-                    include: [[sequelize.fn('date_format', sequelize.col('deadlineTime'), '%Y/%m/%d %H:%i'), 'deadlineTime_formated'],
-                        [sequelize.fn('date_format', sequelize.col('startTime'), '%Y/%m/%d %H:%i'), 'startTime_formated']]
+                    include: [[sequelize.fn('to_char', sequelize.col('deadlineTime'), 'YYYY/MM/DD HH24:MI'), 'deadlineTime_formated'],
+                        [sequelize.fn('to_char', sequelize.col('startTime'), 'YYYY/MM/DD HH24:MI'), 'startTime_formated']]
                 },
                 include: [
                     {model: User, as: 'holder', attributes: ['userName', 'id'], where: {id: req.body.userId}},
@@ -165,8 +146,8 @@ exports.getEvents = function (req, res, promise) {
     } else if (req.body.mode == 3) {
         Event.findAll({
             attributes: {
-                include: [[sequelize.fn('date_format', sequelize.col('deadlineTime'), '%Y/%m/%d %H:%i'), 'deadlineTime_formated'],
-                    [sequelize.fn('date_format', sequelize.col('startTime'), '%Y/%m/%d %H:%i'), 'startTime_formated']]
+                include: [[sequelize.fn('to_char', sequelize.col('deadlineTime'), 'YYYY/MM/DD HH24:MI'), 'deadlineTime_formated'],
+                    [sequelize.fn('to_char', sequelize.col('startTime'), 'YYYY/MM/DD HH24:MI'), 'startTime_formated']]
             },
             include: [
                 {model: User, as: 'holder', attributes: ['userName', 'id']},
@@ -178,8 +159,8 @@ exports.getEvents = function (req, res, promise) {
             data = JSON.parse(JSON.stringify(events));
             return Event.findAll({
                 attributes: {
-                    include: [[sequelize.fn('date_format', sequelize.col('deadlineTime'), '%Y/%m/%d %H:%i'), 'deadlineTime_formated'],
-                        [sequelize.fn('date_format', sequelize.col('startTime'), '%Y/%m/%d %H:%i'), 'startTime_formated']]
+                    include: [[sequelize.fn('to_char', sequelize.col('deadlineTime'), 'YYYY/MM/DD HH24:MI'), 'deadlineTime_formated'],
+                        [sequelize.fn('to_char', sequelize.col('startTime'), 'YYYY/MM/DD HH24:MI'), 'startTime_formated']]
                 },
                 include: [
                     {model: User, as: 'holder', attributes: ['userName', 'id'], where: {id: req.body.userId}},

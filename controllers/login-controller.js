@@ -60,7 +60,7 @@ exports.login = function (req, res, promise) {
 
     if (isUsername) {
         // username to login
-        findUser = User.findOne({where: {username: req.body.usernameOrEmail}})
+        findUser = User.findOne({where: {userName: req.body.usernameOrEmail}})
             .then(function (entry) {
                 if (!entry) {
                     respond.errorMsg = 'userNotfound';

@@ -1,40 +1,67 @@
 var seq = require('./../seq');
-var sequence = ['participant-list.js', 'user', 'login-status','event','rate'];
+var sequence = ['user', 'login-status','event','participant-list.js', 'rate'];
+var env = require('./../../env');
 
 exports.createDB = function () {
-    var p = seq.query('SET foreign_key_checks=0');
-    (function loop(i) {
-        if (i == sequence.length) {
-            p.then(function () {
-                return seq.query('SET foreign_key_checks=1');
+    if (env.DB_TYPE == 'postgres'){
+        var m = (function loop(i) {
+            if (i == sequence.length) {
+                return;
+            }
+            var m = require('../' + sequence[i]);
+            return m.sync({force: false}).then(function () {
+                return loop(i + 1);
             });
-            return;
-        }
-        var m = require('../' + sequence[i]);
-        p = p.then(function () {
-            return m.sync({force: true})
-        });
-        loop(i + 1);
-    })(0);
-    return p;
+        })(0);
+        return m;
+    } else {
+        var p = seq.query('SET foreign_key_checks=0');
+        (function loop(i) {
+            if (i == sequence.length) {
+                p.then(function () {
+                    return seq.query('SET foreign_key_checks=1');
+                });
+                return;
+            }
+            var m = require('../' + sequence[i]);
+            p = p.then(function () {
+                return m.sync({force: false})
+            });
+            loop(i + 1);
+        })(0);
+        return p;
+    }
 };
 
 exports.dropDB = function () {
-    var p = seq.query('SET foreign_key_checks=0');
-    (function loop(i) {
-        if (i < 0) {
-            p.then(function () {
-                return seq.query('SET FOREIGN_KEY_CHECKS=1');
+    if (env.DB_TYPE == 'postgres') {
+        var m = (function loop(i) {
+            if (i < 0) {
+                return;
+            }
+            var m = require('../' + sequence[i]);
+            return m.drop().then(function () {
+                return loop(i - 1);
             });
-            return;
-        }
-        var m = require('../' + sequence[i]);
-        p = p.then(function () {
-            return m.drop();
-        });
-        loop(i - 1);
-    })(sequence.length - 1);
-    return p;
+        })(sequence.length - 1);
+        return m;
+    } else {
+        var p = seq.query('SET foreign_key_checks=0');
+        (function loop(i) {
+            if (i < 0) {
+                p.then(function () {
+                    return seq.query('SET FOREIGN_KEY_CHECKS=1');
+                });
+                return;
+            }
+            var m = require('../' + sequence[i]);
+            p = p.then(function () {
+                return m.drop();
+            });
+            loop(i - 1);
+        })(sequence.length - 1);
+        return p;
+    }
 };
 
 exports.rebuildDB = function () {
