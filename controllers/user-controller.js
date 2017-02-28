@@ -29,31 +29,6 @@ exports.getUser = function (req, res, promise) {
 exports.postRate = function (req, res, promise) {
     console.log(req.body);
 
-    if (req.body.extraversion == null) {
-        promise.reject(new Error('eIsNull'));
-        return promise;
-    }
-
-    if (req.body.agreeableness == null) {
-        promise.reject(new Error('aIsNull'));
-        return promise;
-    }
-
-    if (req.body.conscientiousness == null) {
-        promise.reject(new Error('cIsNull'));
-        return promise;
-    }
-
-    if (req.body.neuroticism == null) {
-        promise.reject(new Error('nIsNull'));
-        return promise;
-    }
-
-    if (req.body.openness == null) {
-        promise.reject(new Error('oIsNull'));
-        return promise;
-    }
-
     if (req.body.extraversion > 3 || req.body.extraversion < -3){
         promise.reject(new Error('rateInvalid'));
         return promise;
@@ -132,31 +107,6 @@ exports.postRate = function (req, res, promise) {
 
 exports.postSelfRate = function (req, res, promise) {
     console.log(req.body);
-
-    if (req.body.extraversion > 5 || req.body.extraversion < 1){
-        promise.reject(new Error('rateInvalid'));
-        return promise;
-    }
-
-    if (req.body.agreeableness > 5 || req.body.agreeableness < 1){
-        promise.reject(new Error('rateInvalid'));
-        return promise;
-    }
-
-    if (req.body.conscientiousness > 5 || req.body.conscientiousness < 1){
-        promise.reject(new Error('rateInvalid'));
-        return promise;
-    }
-
-    if (req.body.neuroticism > 5 || req.body.neuroticism < 1){
-        promise.reject(new Error('rateInvalid'));
-        return promise;
-    }
-
-    if (req.body.openness > 5 || req.body.openness < 1){
-        promise.reject(new Error('rateInvalid'));
-        return promise;
-    }
 
     User.update({
         selfExtraversion: req.body.extraversion,

@@ -1,16 +1,28 @@
 var seq = require('./seq');
 var Sequelize = require('sequelize');
 
-var ParticipantList = seq.define('ParticipantList', {
+var ParticipantList = seq.define('participantList', {
     id : {
         unique: true,
         primaryKey: true,
         type: Sequelize.INTEGER,
         autoIncrement: true
     },
-    userId : Sequelize.INTEGER,
-    eventId : Sequelize.INTEGER,
-    attendance: Sequelize.BOOLEAN
+    userId : {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        validate: {isInt: true}
+    },
+    eventId : {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        validate: {isInt: true}
+    },
+    attendance: {
+        type: Sequelize.BOOLEAN,
+        defaultValue: false,
+        allowNull: false
+    }
 });
 
 module.exports = ParticipantList;

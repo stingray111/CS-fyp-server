@@ -63,7 +63,7 @@ exports.register = function (req, res, promise) {
 
     User.findOne({
         where: {
-            username: req.body.userName
+            userName: req.body.userName
         }
     }).then(function (entry) {
         if (entry)

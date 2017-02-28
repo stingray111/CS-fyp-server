@@ -2,24 +2,69 @@ var seq = require('./seq');
 var Sequelize = require('sequelize');
 
 // todo change back to our feed model
-var Event = seq.define('Event', {
+var Event = seq.define('event', {
     id : {
         unique: true,
         primaryKey: true,
         type: Sequelize.INTEGER,
         autoIncrement: true
     },
-    holderId : Sequelize.INTEGER,
-    name : Sequelize.STRING,
-    place : Sequelize.STRING,
-    latitude : Sequelize.DOUBLE,
-    longitude : Sequelize.DOUBLE,
-    description: Sequelize.STRING,
-    deadlineTime: Sequelize.DATE,
-    startTime: Sequelize.DATE,
-    currentPpl: Sequelize.INTEGER,
-    minPpl: Sequelize.INTEGER,
-    maxPpl: Sequelize.INTEGER
+    holderId : {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        validate: {isInt: true}
+    },
+    name : {
+        type: Sequelize.STRING,
+        allowNull: false,
+        validate: {notEmpty: true}
+    },
+    place : {
+        type: Sequelize.STRING,
+        allowNull: false,
+        validate: {notEmpty: true}
+    },
+    latitude : {
+        type: Sequelize.DOUBLE,
+        allowNull: false,
+        validate: {isFloat: true}
+    },
+    longitude : {
+        type: Sequelize.DOUBLE,
+        allowNull: false,
+        validate: {isFloat: true}
+    },
+    description: {
+        type: Sequelize.STRING(1000),
+        allowNull: false,
+        validate: {notEmpty: true}
+    },
+    deadlineTime: {
+        type: Sequelize.DATE,
+        allowNull: false,
+        validate: {isDate: true, notEmpty: true}
+    },
+    startTime: {
+        type: Sequelize.DATE,
+        allowNull: false,
+        validate: {isDate: true, notEmpty: true}
+    },
+    currentPpl: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        defaultValue: 0,
+        validate: {isInt: true, min: 0, max: 20}
+    },
+    minPpl: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        validate: {isInt: true, min: 0, max: 20}
+    },
+    maxPpl: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        validate: {isInt: true, min: 0, max: 20}
+    }
 });
 
 module.exports = Event;
