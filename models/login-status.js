@@ -5,7 +5,7 @@ var LoginStatus = seq.define('loginStatus', {
     id : {  //this is actually the token
         primaryKey: true,
         field: 'id',
-        type: Sequelize.STRING,
+        type: Sequelize.STRING(1024),
         allowNull: false
     },
     userId : {
@@ -16,7 +16,7 @@ var LoginStatus = seq.define('loginStatus', {
     userId: Sequelize.INTEGER,
     ipaddr: Sequelize.STRING,
     platform: Sequelize.STRING,
-    msgToken: Sequelize.STRING 
+    msgToken: Sequelize.STRING(1024) 
 });
 
 module.exports = LoginStatus;

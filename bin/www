@@ -70,9 +70,9 @@ function onError(error) {
     throw error;
   }
 
-  var bind = typeof port === 'string'
-    ? 'Pipe ' + port
-    : 'Port ' + port;
+  var bind = typeof httpsport === 'string'
+    ? 'Pipe ' + httpsport
+    : 'Port ' + httpsport;
 
   // handle specific listen errors with friendly messages
   switch (error.code) {
