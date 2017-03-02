@@ -6,7 +6,6 @@ var hasher = require('../lib/hasher');
 var sequelize = require('sequelize');
 var moment = require('moment');
 
-
 exports.pushEvent = function (req, res, promise) {
     console.log(req.body);
     Event.create({
@@ -76,6 +75,9 @@ exports.getEvents = function (req, res, promise) {
     const latPerKilo = 0.009009;
     const lngPerKilo = 0.011764;
     var data = [];
+    var retStartId = Date.now();
+    console.log(req.body.startAt);
+    console.log(new Date(Number(req.body.startAt)));
 
     if (req.body.mode > 3 || req.body.mode < 1) {
         promise.reject(new Error('modeNotExist'));
@@ -93,14 +95,20 @@ exports.getEvents = function (req, res, promise) {
                 // todo fix range issue in pole??
                 latitude: {$between: [req.body.latitude - 50 * latPerKilo, req.body.latitude + 50 * latPerKilo]},
                 longitude: {$between: [req.body.longitude - 50 * lngPerKilo, req.body.longitude + 50 * lngPerKilo]},
-                deadlineTime: {$gt: Date.now()}
-            }
+		createdAt: {$lt: new Date(req.body.startAt)},
+                deadlineTime: {$gt: retStartId}
+            },
+	    offset: req.body.offset,
+	    order: 'name',
+	    limit: 20,
+	    
         }).then(function (events) {
             var temp = JSON.parse(JSON.stringify(events));
             console.log(temp);
             res.send({
                 errorMsg: null,
-                data: temp
+                data: temp,
+		startId: retStartId
             });
             promise.resolve();
         }).catch(function (e) {
