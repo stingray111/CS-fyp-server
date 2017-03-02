@@ -6,40 +6,40 @@
 
 var app = require('../app');
 var debug = require('debug')('cs-fyp-server:server');
-//var http = require('http');
+var http = require('http');
 var https = require('https');
-var ssl = require('../sslLicense');
+//var ssl = require('../sslLicense');
 
 /**
  * Get port from environment and store in Express.
  */
 
-//var port = normalizePort(process.env.PORT || '3000');
-//app.set('port', port);
+var port = normalizePort(process.env.PORT || '3000');
+app.set('port', port);
 
-var httpsport = normalizePort(process.env.PORT || '3000');
-app.set('httpsport', httpsport);
+//var httpsport = normalizePort(process.env.PORT || '3000');
+//app.set('httpsport', httpsport);
 
 /**
  * Create HTTP server.
  */
 
-//var server = http.createServer(app);
-var httpsServer = https.createServer(ssl.options, app);
+var server = http.createServer(app);
+//var httpsServer = https.createServer(ssl.options, app);
 
 /**
  * Listen on provided port, on all network interfaces.
  */
 
-//server.listen(port);
+server.listen(port);
 
-//server.on('error', onError);
-//server.on('listening', onListening);
+server.on('error', onError);
+server.on('listening', onListening);
 
-httpsServer.listen(httpsport);
+//httpsServer.listen(httpsport);
 
-httpsServer.on('error', onError);
-httpsServer.on('listening', onListening);
+//httpsServer.on('error', onError);
+//httpsServer.on('listening', onListening);
 
 /**
  * Normalize a port into a number, string, or false.
@@ -94,8 +94,8 @@ function onError(error) {
  */
 
 function onListening() {
-  //var addr = server.address();
-  var addr = httpsServer.address();
+  var addr = server.address();
+  //var addr = httpsServer.address();
   var bind = typeof addr === 'string'
     ? 'pipe ' + addr
     : 'port ' + addr.port;

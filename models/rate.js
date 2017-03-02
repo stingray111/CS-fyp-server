@@ -54,6 +54,6 @@ var Rate = seq.define('rate', {
         allowNull: false,
         validate: {isInt: true}
     }
-});
+}, {paranoid: true});
 
 module.exports = Rate;
