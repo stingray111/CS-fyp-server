@@ -45,14 +45,13 @@ var User = seq.define('user', {
     attendEventNum: {
         type: Sequelize.INTEGER,
         allowNull: false,
-        defaultValue: 0,
-        validate: {isInt: true, min: 0}
+        defaultValue: 0
     },
     abcentEventNum: {
         type: Sequelize.INTEGER,
         allowNull: false,
         defaultValue: 0,
-        validate: {isInt: true, min: 0}
+        validate: {isInt: true, min: 0}   // todo may crash using literal()
     },
     holdEventNum: {
         type: Sequelize.INTEGER,

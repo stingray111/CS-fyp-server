@@ -228,7 +228,7 @@ exports.joinEvent = function (req, res, promise) {
         }, {where: {id: req.body.eventId}})
     }).then(function () {
         return User.update({
-            attendEventNum: sequelize.literal('attendEventNum +1')
+            attendEventNum: sequelize.literal('attendEventNum +1')  // todo fix this not int
         }, {where: {id: req.body.userId}})
     }).then(function () {
         res.send({
@@ -278,7 +278,7 @@ exports.quitEvent = function (req, res, promise) {
         }, {where: {id: req.body.eventId}});
     }).then(function () {
         return User.update({
-            attendEventNum: sequelize.literal('attendEventNum -1')
+            attendEventNum: sequelize.literal('attendEventNum -1')  // todo fix this not int
         }, {where: {id: req.body.userId}})
     }).then(function () {
         res.send({
