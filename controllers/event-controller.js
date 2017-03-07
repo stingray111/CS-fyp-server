@@ -49,7 +49,8 @@ exports.getEvent = function (req, res, promise) {
             {model: User, as: 'participantList', attributes: ['userName', 'id']},
             {model: Participation, as: 'attendance'}
         ],
-        where: {id: req.body.id}
+        where: {id: req.body.id},
+        order: [[ { model: User, as: 'participantList' }, 'userName']]
     }).then(function (event) {
         eventTS = event.get({
             plain: true
@@ -95,12 +96,12 @@ exports.getEvents = function (req, res, promise) {
                 // todo fix range issue in pole??
                 latitude: {$between: [req.body.latitude - 50 * latPerKilo, req.body.latitude + 50 * latPerKilo]},
                 longitude: {$between: [req.body.longitude - 50 * lngPerKilo, req.body.longitude + 50 * lngPerKilo]},
-		createdAt: {$lt: new Date(req.body.startAt)},
+		        createdAt: {$lt: new Date(req.body.startAt)},
                 deadlineTime: {$gt: retStartId}
             },
 	    offset: req.body.offset,
 	    order: 'name',
-	    limit: 20,
+	    limit: 20
 	    
         }).then(function (events) {
             var temp = JSON.parse(JSON.stringify(events));
@@ -112,6 +113,7 @@ exports.getEvents = function (req, res, promise) {
             });
             promise.resolve();
         }).catch(function (e) {
+            console.log(e);
             promise.reject(new Error(e));
         })
     } else if (req.body.mode == 2) {  // for history
@@ -125,8 +127,7 @@ exports.getEvents = function (req, res, promise) {
                 {model: User, as: 'participantList', attributes: ['userName', 'id'], where: {id: req.body.userId}}],
             where: {
                 startTime: {$lt: Date.now()}
-            },
-            raw: true
+            }
         }).then(function (events) {
             data = JSON.parse(JSON.stringify(events));
             return Event.findAll({
@@ -141,14 +142,16 @@ exports.getEvents = function (req, res, promise) {
                     startTime: {$lt: Date.now()}
                 }
             });
-        }).then(function (events2) {
-            Array.prototype.push.apply(data, JSON.parse(JSON.stringify(events2)));
+        }).then(function (eventOfHolder) {
+            Array.prototype.push.apply(data, JSON.parse(JSON.stringify(eventOfHolder)));
+            console.log(data);
             res.send({
                 errorMsg: null,
                 data: data
             });
             promise.resolve();
         }).catch(function (e) {
+            console.log(e);
             promise.reject(new Error(e));
         })
     } else if (req.body.mode == 3) {
@@ -164,6 +167,7 @@ exports.getEvents = function (req, res, promise) {
                 startTime: {$gt: Date.now()}
             }
         }).then(function (events) {
+            console.log(events);
             data = JSON.parse(JSON.stringify(events));
             return Event.findAll({
                 attributes: {
@@ -177,14 +181,16 @@ exports.getEvents = function (req, res, promise) {
                     startTime: {$gt: Date.now()}
                 }
             });
-        }).then(function (events2) {
-            Array.prototype.push.apply(data, JSON.parse(JSON.stringify(events2)));
+        }).then(function (eventOfHolder) {
+            Array.prototype.push.apply(data, JSON.parse(JSON.stringify(eventOfHolder)));
+            console.log(data);
             res.send({
                 errorMsg: null,
                 data: data
             });
             promise.resolve();
         }).catch(function (e) {
+            console.log(e);
             promise.reject(new Error(e));
         })
     }
@@ -228,7 +234,7 @@ exports.joinEvent = function (req, res, promise) {
         }, {where: {id: req.body.eventId}})
     }).then(function () {
         return User.update({
-            attendEventNum: sequelize.literal('attendEventNum +1')  // todo fix this not int
+            attendEventNum: sequelize.literal('"attendEventNum" +1')  // todo fix this not int
         }, {where: {id: req.body.userId}})
     }).then(function () {
         res.send({
@@ -236,6 +242,7 @@ exports.joinEvent = function (req, res, promise) {
         });
         promise.resolve();
     }).catch(function (e) {
+        console.log(e);
         if (e == 'holderCannotJoinSelfEvent' || e == 'eventFull' || 'alreadyJoined') {
             res.send({
                 errorMsg: e
@@ -278,7 +285,7 @@ exports.quitEvent = function (req, res, promise) {
         }, {where: {id: req.body.eventId}});
     }).then(function () {
         return User.update({
-            attendEventNum: sequelize.literal('attendEventNum -1')  // todo fix this not int
+            attendEventNum: sequelize.literal('"attendEventNum" -1')  // todo fix this not int
         }, {where: {id: req.body.userId}})
     }).then(function () {
         res.send({
@@ -348,7 +355,7 @@ exports.changeAttendance = function(req, res, promise) {
             errorMsg: null
         });
         return Rate.count({where:{otherUserId: req.body.userId}});
-    }).then(function () {
+    }).then(function (counts) {
         if (counts > 5)
             return seq.query("SELECT SUM(b.extraversion) as e, SUM(b.agreeableness) as a, SUM(b.conscientiousness) as c, SUM(b.neuroticism) as n, SUM(b.openness) as o, SUM(b.weight) as w FROM Rate As b INNER JOIN (SELECT MAX(id) as tt FROM Rate WHERE deletedAt IS NULL GROUP BY otherUserId LIMIT 30) AS a ON b.id = a.tt");
         else
@@ -370,9 +377,10 @@ exports.changeAttendance = function(req, res, promise) {
     }).then(function () {
         promise.resolve();
     }).catch(function (e) {
-        res.send({
-            errorMsg: e
-        });
+        console.log(e);
+        // res.send({
+        //     errorMsg: e
+        // });
         promise.reject();
     });
     return promise;
