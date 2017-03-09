@@ -6,6 +6,7 @@ var hasher = require('../lib/hasher');
 var sequelize = require('sequelize');
 var moment = require('moment');
 
+
 exports.pushEvent = function (req, res, promise) {
     console.log(req.body);
     Event.create({
@@ -76,7 +77,8 @@ exports.getEvents = function (req, res, promise) {
     const lngPerKilo = 0.011764;
     var data = [];
     var retStartId = Date.now();
-    console.log(req.body.startAt);
+    console.log(req.body.sortMode);
+    var sortMode = req.body.sortMode;
     console.log(new Date(Number(req.body.startAt)));
 
     if (req.body.mode > 3 || req.body.mode < 1) {
@@ -98,10 +100,48 @@ exports.getEvents = function (req, res, promise) {
 		createdAt: {$lt: new Date(req.body.startAt)},
                 deadlineTime: {$gt: retStartId}
             },
-	    offset: req.body.offset,
-	    order: 'name',
-	    limit: 20,
-	    
+	    //offset: req.body.offset,
+	    //order: 'name',
+	    //limit: 20,
+	}).then(function(events){
+		if(sortMode == 3){
+		events.sort(function(a,b){
+		    var na = a.name.toUpperCase();
+		    var nb = b.name.toUpperCase();
+		    if(na < nb){
+			return -1;
+		    }
+		    if(na > nb){
+			return 1;
+		    }
+		    return 0;
+		});
+		}
+		if(sortMode == 2){
+		events.sort(function(a,b){
+			if(a.currentPpl < b.currentPpl){
+				return -1;
+			}
+			if(a.currentPpl > b.currentPpl){
+				return 1;
+			}
+			return 0;
+		});
+		}
+		if(sortMode == 1){
+		events.sort(function(a,b){
+			var adiff = Math.abs(req.body.latitude - a.latitude)+Math.abs(req.body.longitude - a.longitude);
+			var bdiff = Math.abs(req.body.latitude - b.latitude)+Math.abs(req.body.longitude - b.longitude);
+			if (adiff < bdiff){
+				return -1;
+			}
+			if(adiff > bdiff){
+				return 1;
+			}
+			return 0;
+		});
+		}
+		return events.slice(req.body.offset,req.body.offset+20);
         }).then(function (events) {
             var temp = JSON.parse(JSON.stringify(events));
             console.log(temp);
@@ -234,12 +274,15 @@ exports.joinEvent = function (req, res, promise) {
         res.send({
             errorMsg: null
         });
+	console.log("res\n\n");
+	console.log(res);
         promise.resolve();
     }).catch(function (e) {
         if (e == 'holderCannotJoinSelfEvent' || e == 'eventFull' || 'alreadyJoined') {
             res.send({
                 errorMsg: e
             });
+	    console.log(e);
             promise.resolve();
         } else {
             promise.reject();
