@@ -23,7 +23,8 @@ exports.pushEvent = function (req, res, promise) {
         maxPpl: req.body.maxPpl
     }).then(function (event) {
         res.send({
-            errorMsg: null
+            errorMsg: null,
+            event: event
         });
         promise.resolve();
     });
