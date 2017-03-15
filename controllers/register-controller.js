@@ -93,7 +93,7 @@ exports.register = function (req, res, promise) {
             lastName: req.body.lastName,
             nickName: req.body.nickName,
             gender: req.body.isMale,
-            proPic: req.body.propic,
+            proPic: req.body.proPic,
             phone: req.body.phone,
             description: req.body.description,
             isSelfRated: false,
