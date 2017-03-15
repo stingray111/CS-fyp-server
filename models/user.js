@@ -137,6 +137,15 @@ var User = seq.define('user', {
         allowNull: false
         //validate: {notEmpty: true}
     }
+    
+/*
+    acType:{
+        type: Sequelize.INTEGER
+    },
+    facebookId{
+    */
+    
+    
 });
 
 module.exports = User;
