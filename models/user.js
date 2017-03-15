@@ -30,7 +30,7 @@ var User = seq.define('user', {
         type: Sequelize.BOOLEAN,
         allowNull: false
     },
-    proPic: Sequelize.BOOLEAN,
+    proPic: Sequelize.STRING(1000),
     password: {
         type: Sequelize.STRING(1000),
         allowNull: false,
