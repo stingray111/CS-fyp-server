@@ -16,7 +16,8 @@ exports.thirdPartySignIn = function(req,res,promise){
         username: null,
         token: null,
         msgToken: null,
-        self: null
+        self: null,
+        acType:null,
     }
 
 
@@ -52,8 +53,8 @@ exports.thirdPartySignIn = function(req,res,promise){
             abcentEventNum: 0,
             holdEventNum: 0,
             msgToken: firebaseToken,
-            level: 1
-            }
+            level: 1,
+            acType: req.body.acType
         }).spread(function(entry, created){
             if(created){
                 console.log('created');
@@ -61,7 +62,7 @@ exports.thirdPartySignIn = function(req,res,promise){
                 return entry;
             }
             else{
-                console.log('found');
+                console.log('login');
                 respond.isSignIn = true;
                 return entry.updateAttributes({
                     firstName: req.body.firstName,
@@ -89,6 +90,7 @@ exports.thirdPartySignIn = function(req,res,promise){
             respond.msgToken = user.msgToken;
             respond.token = loginStatus.id;
             respond.username = user.userName;
+            respond.acType = req.body.acType;
 
             console.log(respond);
             res.send(respond);

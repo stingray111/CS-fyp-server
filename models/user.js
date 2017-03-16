@@ -27,14 +27,12 @@ var User = seq.define('user', {
         type: Sequelize.STRING
     },
     gender: {
-        type: Sequelize.BOOLEAN,
+        type: Sequelize.INTEGER,
         allowNull: false
     },
     proPic: Sequelize.STRING(1000),
     password: {
         type: Sequelize.STRING(1000),
-        allowNull: false,
-        validate: {notEmpty: true}  // todo add regex
     },
     salt: Sequelize.STRING, //todo use different salt?
     saltDate: Sequelize.DATE,
@@ -61,8 +59,6 @@ var User = seq.define('user', {
     },
     email: {
         type: Sequelize.STRING,
-        allowNull: false,
-        validate: {isEmail: true, notEmpty: true}
     },
     phone: {
         type: Sequelize.STRING
@@ -136,16 +132,11 @@ var User = seq.define('user', {
         type: Sequelize.STRING(1000),
         allowNull: false
         //validate: {notEmpty: true}
-    }
-    
-/*
+    },
     acType:{
         type: Sequelize.INTEGER
-    },
-    facebookId{
-    */
-    
-    
+    }
+
 });
 
 module.exports = User;
