@@ -5,6 +5,7 @@ var loginCtrl = require('../controllers/login-controller');
 var registerCtrl = require('../controllers/register-controller');
 var eventCtrl = require('../controllers/event-controller');
 var userCtrl = require('../controllers/user-controller');
+var thirdPartyCtrl = require('../controllers/third-party-sign-in.js');
 
 
 router.post('/api/register', mw(registerCtrl.register));
@@ -32,5 +33,7 @@ router.post('/api/quit-event', mw(eventCtrl.quitEvent));
 router.post('/api/delete-event', mw(eventCtrl.deleteEvent));
 
 router.post('/api/change-attendance', mw(eventCtrl.changeAttendance));
+
+router.post('/api/third-party-sign-in', mw(thirdPartyCtrl.thirdPartySignIn));
 
 module.exports = router;

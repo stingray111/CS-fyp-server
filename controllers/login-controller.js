@@ -99,13 +99,13 @@ exports.login = function (req, res, promise) {
             userId: entry.id,
             ipaddr: req.body.ip,
             platform: req.body.platform,
-	    msgToken: entry.msgToken
+            msgToken: entry.msgToken
         }), entry];
     }).spread(function (loginStatus, user) {
         respond.token = loginStatus.id;
         respond.userId = loginStatus.userId;
         respond.isSuccessful = true;
-	respond.msgToken = loginStatus.msgToken;
+        respond.msgToken = loginStatus.msgToken;
         respond.self = user;
         // req.locals.testing = {
         //     token: loginStatus.id
