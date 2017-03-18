@@ -47,8 +47,8 @@ exports.getEvent = function (req, res, promise) {
                 [sequelize.fn('to_char', sequelize.col('startTime'), 'YYYY/MM/DD HH24:MI'), 'startTime_formated']]
         },
         include: [
-            {model: User, as: 'holder', attributes: ['userName', 'id']},
-            {model: User, as: 'participantList', attributes: ['userName', 'id']},
+            {model: User, as: 'holder', attributes: ['userName', 'id','firstName','lastName','nickName','proPic']},
+            {model: User, as: 'participantList', attributes: ['userName', 'id','firstName','lastName','nickName','proPic']},
             {model: Participation, as: 'attendance'}
         ],
         where: {id: req.body.id},
@@ -94,7 +94,7 @@ exports.getEvents = function (req, res, promise) {
                 include: [[sequelize.fn('to_char', sequelize.col('deadlineTime'), 'YYYY/MM/DD HH24:MI'), 'deadlineTime_formated'],
                     [sequelize.fn('to_char', sequelize.col('startTime'), 'YYYY/MM/DD HH24:MI'), 'startTime_formated']]
             },
-            include: [{model: User, as: 'holder', attributes: ['userName']}],
+            include: [{model: User, as: 'holder', attributes: ['userName','firstName','lastName','nickName','proPic']}],
             where: {
                 // todo fix range issue in pole??
                 latitude: {$between: [req.body.latitude - 50 * latPerKilo, req.body.latitude + 50 * latPerKilo]},
@@ -161,8 +161,8 @@ exports.getEvents = function (req, res, promise) {
                     [sequelize.fn('to_char', sequelize.col('startTime'), 'YYYY/MM/DD HH24:MI'), 'startTime_formated']]
             },
             include: [
-                {model: User, as: 'holder', attributes: ['userName', 'id']},
-                {model: User, as: 'participantList', attributes: ['userName', 'id'], where: {id: req.body.userId}}],
+                {model: User, as: 'holder', attributes: ['userName', 'firstName','lastName','nickName','proPic','id']},
+                {model: User, as: 'participantList', attributes: ['userName', 'firstName','lastName','nickName','proPic','id'], where: {id: req.body.userId}}],
             where: {
                 startTime: {$lt: Date.now()}
             }
@@ -174,8 +174,8 @@ exports.getEvents = function (req, res, promise) {
                         [sequelize.fn('to_char', sequelize.col('startTime'), 'YYYY/MM/DD HH24:MI'), 'startTime_formated']]
                 },
                 include: [
-                    {model: User, as: 'holder', attributes: ['userName', 'id'], where: {id: req.body.userId}},
-                    {model: User, as: 'participantList', attributes: ['userName', 'id']}],
+                    {model: User, as: 'holder', attributes: ['userName', 'firstName','lastName','nickName','proPic','id'], where: {id: req.body.userId}},
+                    {model: User, as: 'participantList', attributes: ['userName', 'firstName','lastName','nickName','proPic','id']}],
                 where: {
                     startTime: {$lt: Date.now()}
                 }
@@ -199,8 +199,8 @@ exports.getEvents = function (req, res, promise) {
                     [sequelize.fn('to_char', sequelize.col('startTime'), 'YYYY/MM/DD HH24:MI'), 'startTime_formated']]
             },
             include: [
-                {model: User, as: 'holder', attributes: ['userName', 'id']},
-                {model: User, as: 'participantList', attributes: ['userName', 'id'], where: {id: req.body.userId}}],
+                {model: User, as: 'holder', attributes: ['userName', 'firstName','lastName','nickName','proPic','id']},
+                {model: User, as: 'participantList', attributes: ['userName','firstName','lastName','nickName','proPic', 'id'], where: {id: req.body.userId}}],
             where: {
                 startTime: {$gt: Date.now()}
             }
@@ -213,8 +213,8 @@ exports.getEvents = function (req, res, promise) {
                         [sequelize.fn('to_char', sequelize.col('startTime'), 'YYYY/MM/DD HH24:MI'), 'startTime_formated']]
                 },
                 include: [
-                    {model: User, as: 'holder', attributes: ['userName', 'id'], where: {id: req.body.userId}},
-                    {model: User, as: 'participantList', attributes: ['userName', 'id']}],
+                    {model: User, as: 'holder', attributes: ['userName', 'firstName','lastName','nickName','proPic','id'], where: {id: req.body.userId}},
+                    {model: User, as: 'participantList', attributes: ['userName', 'firstName','lastName','nickName','proPic','id']}],
                 where: {
                     startTime: {$gt: Date.now()}
                 }

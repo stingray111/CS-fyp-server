@@ -55,6 +55,7 @@ exports.thirdPartySignIn = function(req,res,promise){
             msgToken: firebaseToken,
             level: 1,
             acType: req.body.acType
+            }
         }).spread(function(entry, created){
             if(created){
                 console.log('created');
@@ -67,6 +68,7 @@ exports.thirdPartySignIn = function(req,res,promise){
                 return entry.updateAttributes({
                     firstName: req.body.firstName,
                     lastName: req.body.lastName,
+                    msgToken: firebaseToken,
                     gender: req.body.gender,
                     proPic: req.body.proPic,
                     email: req.body.email
