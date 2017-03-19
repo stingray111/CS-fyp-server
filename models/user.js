@@ -129,7 +129,7 @@ var User = seq.define('user', {
         validate: {isInt: true, min: 0}
     },
     msgToken: {
-        type: Sequelize.STRING(1000),
+        type: Sequelize.STRING(1024),
         allowNull: false
         //validate: {notEmpty: true}
     },

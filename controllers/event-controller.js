@@ -22,11 +22,19 @@ exports.pushEvent = function (req, res, promise) {
         minPpl: req.body.minPpl,
         maxPpl: req.body.maxPpl
     }).then(function (event) {
-        res.send({
-            errorMsg: null,
-            event: event
+        User.findOne({
+            attributes:['userName','id','firstName','lastName','nickName','proPic'],
+            where: {id: req.body.holderId}
+        }).then(function(holder){
+            event.dataValues.holder = holder.dataValues;
+            return event;
+        }).then(function(event){
+            res.send({
+                errorMsg: null,
+                event: event
+            });
+            promise.resolve();
         });
-        promise.resolve();
     });
     return promise;
 };
