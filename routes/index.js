@@ -10,6 +10,8 @@ var thirdPartyCtrl = require('../controllers/third-party-sign-in.js');
 
 router.post('/api/register', mw(registerCtrl.register));
 
+router.post('/api/forget-password', mw(registerCtrl.forgetPassword));
+
 router.post('/api/post-rate', mw(userCtrl.postRate));
 
 router.post('/api/post-self-rate', mw(userCtrl.postSelfRate));
@@ -17,6 +19,8 @@ router.post('/api/post-self-rate', mw(userCtrl.postSelfRate));
 router.post('/api/login', mw(loginCtrl.login));
 
 router.post('/api/logout', mw(loginCtrl.logout));
+
+router.post('/api/update-msg-token', mw(loginCtrl.updateToken));
 
 router.post('/api/get-user', mw(userCtrl.getUser));
 
@@ -35,5 +39,6 @@ router.post('/api/delete-event', mw(eventCtrl.deleteEvent));
 router.post('/api/change-attendance', mw(eventCtrl.changeAttendance));
 
 router.post('/api/third-party-sign-in', mw(thirdPartyCtrl.thirdPartySignIn));
+
 
 module.exports = router;

@@ -2,6 +2,7 @@ var User = require('../models/user');
 var LoginStatus = require('../models/login-status');
 var crypto = require('crypto');
 var hasher = require('../lib/hasher');
+var admin = require("firebase-admin");
 
 /*
    req.body = {
@@ -140,3 +141,35 @@ exports.logout = function (req, res, promise) {
         });
     return promise;
 };
+
+exports.updateToken = function (req, res, promise){
+    console.log(req.body);
+
+    var respond = {
+        isSuccessful:false,
+        errorMsg:null,
+        msgToken:null
+    };
+    
+    admin.auth().createCustomToken(req.body.username)
+    .then(function(firebaseToken){
+        User.findOne( {where: {userName: req.body.username} })
+        .then(function(entry){
+            if(entry){
+                entry.updateAttributes({
+                    msgToken: firebaseToken
+                })
+                .then(function(){
+                    respond.msgToken = firebaseToken
+                    respond.isSuccessful = true
+                    respond.errorMsg = null
+                    console.log(respond);
+                    res.send(respond);
+                    promise.resolve();
+                });
+            }
+        });
+    });
+    return promise;
+}
+                      
