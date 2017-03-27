@@ -114,7 +114,8 @@ exports.register = function (req, res, promise) {
                abcentEventNum: 0,
                holdEventNum: 0,
                msgToken: firebaseToken,
-               level: 1
+               level: 1,
+               acType: 0
         })
     }).then(function (user) {
         if (user) {
@@ -165,7 +166,12 @@ exports.forgetPassword = function (req, res, promise){
     User.findOne({
         where:{
             email: req.body.email,
-            //acType: [null, 0]
+            acType:{
+                $or:{
+                    $eq:null,
+                    $eq:0
+                }
+            }
         }
     }
     ).then(function (entry){
@@ -193,7 +199,8 @@ exports.forgetPassword = function (req, res, promise){
             };
             transport.sendMail(mailOptions,function(error,info){
                 if(error){
-                    throw 'Mail server error';
+                    throw error
+                    //throw 'Mail server error';
                 }else{
                     var hash = hasher.hash(newPwd, hasher.hashVal.dbPw);
                     entry.updateAttributes({ password: hash});
