@@ -26,6 +26,31 @@ exports.getUser = function (req, res, promise) {
     return promise;
 };
 
+exports.editProfile = function (req, res, promise) {
+    console.log(req.body);
+
+    var update = {};
+
+    update.firstName = (req.body.firstName !== null && req.body.firstName !== "") ? req.body.firstName : sequelize.literal('"firstName"');
+    update.lastName = (req.body.lastName !== null && req.body.lastName !== "") ? req.body.lastName : sequelize.literal('"lastName"');
+    update.nickName = (req.body.nickName !== null && req.body.nickName !== "") ? req.body.nickName : sequelize.literal('"nickName"');
+    update.proPic = (req.body.proPic !== null && req.body.proPic !== "") ? req.body.proPic : sequelize.literal('"proPic"');
+    update.phone = (req.body.phone !== null && req.body.phone !== "") ? req.body.phone : sequelize.literal('"phone"');
+    update.description = (req.body.description !== null && req.body.description !== "") ? req.body.description : sequelize.literal('description');
+
+    User.update(update, { where: {id: req.body.id}})
+        .then(function () {
+            res.send({
+                errorMsg: null
+            });
+            promise.resolve();
+        })
+        .catch(function () {
+            promise.reject();
+        });
+    return promise;
+};
+
 exports.postRate = function (req, res, promise) {
     console.log(req.body);
 

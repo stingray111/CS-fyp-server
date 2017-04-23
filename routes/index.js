@@ -22,6 +22,8 @@ router.post('/api/logout', mw(loginCtrl.logout));
 
 router.post('/api/update-msg-token', mw(loginCtrl.updateToken));
 
+router.post('/api/edit-profile', mw(userCtrl.editProfile));
+
 router.post('/api/get-user', mw(userCtrl.getUser));
 
 router.post('/api/get-event', mw(eventCtrl.getEvent));
